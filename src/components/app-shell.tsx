@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { AppProvider } from "@/context/app-context";
+import { Analytics } from "./analytics";
 import { BottomNav } from "./bottom-nav";
 import { Header } from "./header";
 import { JobSheet } from "./job-sheet";
@@ -18,6 +19,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <BottomNav />
         <JobSheet />
         <Toast />
+        <Analytics />
       </div>
     </AppProvider>
   );

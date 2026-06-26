@@ -67,6 +67,16 @@ export default function PrivacidadePage() {
         </div>
 
         <div className="block">
+          <h4>Cookies e medição de uso</h4>
+          <p>
+            Usamos uma ferramenta de analytics para entender como o app é usado (páginas
+            mais acessadas, horários, volume de visitas) e melhorá-lo. Isso usa cookies e
+            só é ativado <b>com o seu consentimento</b> — você pode recusar sem perder
+            nenhuma função. Não usamos esses dados para identificar você pessoalmente.
+          </p>
+        </div>
+
+        <div className="block">
           <h4>Retenção e segurança</h4>
           <p>
             Mantemos seus dados enquanto sua conta existir. A autenticação e o

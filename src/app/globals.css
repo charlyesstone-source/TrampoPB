@@ -1552,6 +1552,54 @@ nav.bottomnav {
   color: var(--brand);
 }
 
+/* Banner de consentimento de cookies (LGPD) ---------------------*/
+.cookie-banner {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: 55;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  box-shadow: var(--shadow);
+  animation: fade 0.3s ease;
+}
+.cookie-banner p {
+  font-size: 12.5px;
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+.cookie-banner a {
+  color: var(--sun-2);
+  font-weight: 700;
+  text-decoration: underline;
+}
+.cookie-acoes {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.cookie-btn {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  border: none;
+}
+.cookie-btn.ghost {
+  background: transparent;
+  color: #cdd6d3;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+.cookie-btn.primary {
+  background: var(--brand);
+  color: #fff;
+}
+
 /* Toast ----------------------------------------------------------*/
 .toast {
   position: absolute;
