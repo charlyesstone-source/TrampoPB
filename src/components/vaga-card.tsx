@@ -1,0 +1,87 @@
+"use client";
+
+import { useApp } from "@/context/app-context";
+import { corLogo } from "@/lib/mock-data";
+import type { Vaga } from "@/lib/types";
+import { IconBookmark } from "./icons";
+
+/** Card de vaga do feed/busca/salvas. Abre o sheet de detalhe ao tocar. */
+export function VagaCard({ vaga }: { vaga: Vaga }) {
+  const { salvas, candidaturasEnviadas, abrirSheet, alternarSalva } = useApp();
+  const salva = salvas.has(vaga.id);
+  const candidatou = candidaturasEnviadas.has(vaga.id);
+
+  return (
+    <div
+      className="card"
+      role="button"
+      tabIndex={0}
+      onClick={() => abrirSheet(vaga.id)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          abrirSheet(vaga.id);
+        }
+      }}
+      aria-label={`Ver vaga: ${vaga.titulo} na ${vaga.empresa}`}
+    >
+      <button
+        type="button"
+        className="save"
+        aria-pressed={salva}
+        aria-label={salva ? "Remover das salvas" : "Salvar vaga"}
+        onClick={(e) => {
+          e.stopPropagation();
+          alternarSalva(vaga.id);
+        }}
+      >
+        <IconBookmark width={20} height={20} filled={salva} />
+      </button>
+      <div className="top">
+        <div className="logo" style={{ background: corLogo(vaga.id) }}>
+          {vaga.empresa[0]}
+        </div>
+        <div>
+          <h3>{vaga.titulo}</h3>
+          <div className="co">{vaga.empresa}</div>
+        </div>
+      </div>
+      <div className="meta">
+        <span className="tag">📍 {vaga.bairro}</span>
+        <span className="tag sal">R$ {vaga.salario}</span>
+        <span className="tag muted">{vaga.tipo}</span>
+      </div>
+      <div className="when">
+        {vaga.publicadaHa}
+        {candidatou && <span className="sent"> • Candidatura enviada</span>}
+      </div>
+    </div>
+  );
+}
+
+/** Lista de vagas com mensagem de vazio. */
+export function ListaVagas({
+  vagas,
+  vazioTitulo,
+  vazioSub,
+}: {
+  vagas: Vaga[];
+  vazioTitulo: string;
+  vazioSub?: string;
+}) {
+  if (vagas.length === 0) {
+    return (
+      <div className="empty">
+        <b>{vazioTitulo}</b>
+        {vazioSub}
+      </div>
+    );
+  }
+  return (
+    <div className="list">
+      {vagas.map((v) => (
+        <VagaCard key={v.id} vaga={v} />
+      ))}
+    </div>
+  );
+}

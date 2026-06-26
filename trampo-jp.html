@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Trampo PB — vagas em João Pessoa e Paraíba</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F4F2EC;
+    --surface:#FFFFFF;
+    --ink:#14201D;
+    --muted:#5C6B66;
+    --line:#E7E3DA;
+    --brand:#0E7C66;
+    --brand-deep:#0A5547;
+    --brand-soft:#E5F1ED;
+    --sun-1:#FF7A4D;
+    --sun-2:#FFB347;
+    --shadow:0 8px 28px -14px rgba(20,32,29,.28);
+    --shadow-sm:0 2px 10px -6px rgba(20,32,29,.25);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:#d9d5cb;
+    color:var(--ink);
+    display:flex;justify-content:center;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* Phone shell ----------------------------------------------------*/
+  .app{
+    position:relative;
+    width:100%;max-width:430px;
+    min-height:100dvh;
+    background:var(--bg);
+    display:flex;flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 0 60px -20px rgba(0,0,0,.4);
+  }
+  @media(min-width:480px){
+    body{align-items:center;padding:22px 0;background:#cfcabf;}
+    .app{min-height:0;height:calc(100dvh - 44px);max-height:920px;border-radius:30px;border:1px solid rgba(0,0,0,.06);}
+  }
+  .sunline{height:4px;background:linear-gradient(90deg,var(--sun-1),var(--sun-2),var(--brand));flex:none;}
+
+  /* Top bar --------------------------------------------------------*/
+  header{
+    flex:none;background:var(--bg);
+    padding:14px 18px 10px;
+    display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid transparent;position:relative;z-index:5;
+  }
+  .brand{display:flex;align-items:center;gap:9px;}
+  .mark{
+    width:30px;height:30px;border-radius:9px;position:relative;flex:none;
+    background:radial-gradient(circle at 50% 118%,var(--sun-2) 0%,var(--sun-1) 42%,var(--brand) 43%,var(--brand-deep) 100%);
+    overflow:hidden;
+  }
+  .mark::after{content:"";position:absolute;left:50%;top:64%;transform:translateX(-50%);
+    width:13px;height:13px;border-radius:50%;background:var(--sun-2);box-shadow:0 0 9px 2px rgba(255,179,71,.7);}
+  .brand b{font-family:'Bricolage Grotesque';font-weight:800;font-size:19px;letter-spacing:-.5px;}
+  .brand b span{color:var(--brand);}
+  .loc{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--muted);font-weight:600;margin-top:1px;}
+  .avatar{width:34px;height:34px;border-radius:50%;flex:none;display:grid;place-items:center;
+    background:var(--brand);color:#fff;font-weight:700;font-size:13px;cursor:pointer;border:none;}
+
+  /* Scroll body ----------------------------------------------------*/
+  main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:14px;}
+  .view{display:none;animation:fade .25s ease;}
+  .view.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  @media(prefers-reduced-motion:reduce){.view,.sheet,.toast{animation:none!important;}}
+
+  .pad{padding:0 18px;}
+  .greet{font-family:'Bricolage Grotesque';font-weight:700;font-size:22px;letter-spacing:-.6px;margin:6px 0 2px;}
+  .greet small{display:block;font-family:'Inter';font-weight:500;font-size:13px;color:var(--muted);letter-spacing:0;margin-top:3px;}
+
+  .search{
+    margin:14px 0 4px;display:flex;align-items:center;gap:10px;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:12px 14px;box-shadow:var(--shadow-sm);cursor:text;width:100%;
+  }
+  .search svg{flex:none;}
+  .search input{border:none;outline:none;font:inherit;font-size:14.5px;width:100%;background:none;color:var(--ink);}
+  .search input::placeholder{color:#9aa7a2;}
+
+  /* Carrossel de destaque / provas sociais -----------------------*/
+  .promo{
+    position:relative;margin:14px 0 2px;border-radius:16px;overflow:hidden;
+    min-height:104px;color:#fff;box-shadow:var(--shadow);
+    background:linear-gradient(100deg,var(--brand-deep),var(--brand));
+  }
+  .promo::before{content:"";position:absolute;right:-26px;bottom:-40px;width:120px;height:120px;border-radius:50%;
+    background:radial-gradient(circle at 30% 30%,var(--sun-2),var(--sun-1));opacity:.9;}
+  .promo-slide{position:absolute;inset:0;display:flex;align-items:center;gap:12px;
+    padding:14px 16px 22px;opacity:0;transition:opacity .55s ease;pointer-events:none;z-index:1;}
+  .promo-slide.active{opacity:1;pointer-events:auto;z-index:2;}
+  .wb-ic,.tst-av{width:42px;height:42px;border-radius:12px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:none;}
+  .tst-av{border-radius:50%;font-family:'Bricolage Grotesque';font-weight:800;font-size:15px;color:#fff;}
+  .wb-tx{z-index:1;min-width:0;}
+  .promo b{font-family:'Bricolage Grotesque';font-weight:800;font-size:18px;letter-spacing:-.4px;display:block;line-height:1.05;}
+  .promo .quote b{font-size:13.5px;font-weight:700;line-height:1.25;letter-spacing:0;}
+  .promo span{font-size:12px;font-weight:500;opacity:.92;display:block;margin-top:3px;}
+  .stars{font-size:11px;color:#FFD27A;letter-spacing:1px;margin-bottom:2px;}
+  .promo-dots{position:absolute;bottom:8px;left:16px;display:flex;gap:5px;z-index:3;}
+  .promo-dots button{width:6px;height:6px;border-radius:50%;border:none;padding:0;cursor:pointer;background:rgba(255,255,255,.4);transition:.2s;}
+  .promo-dots button.on{width:16px;border-radius:3px;background:#fff;}
+
+  /* Category chips -------------------------------------------------*/
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:14px 18px 4px;scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);
+    font:inherit;font-size:13px;font-weight:600;padding:8px 15px;border-radius:100px;cursor:pointer;transition:.18s;}
+  .chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  .sectitle{font-family:'Bricolage Grotesque';font-weight:700;font-size:15px;margin:18px 0 2px;display:flex;justify-content:space-between;align-items:baseline;}
+  .sectitle em{font-style:normal;font-size:12px;font-weight:600;color:var(--muted);}
+
+  /* Vaga card ------------------------------------------------------*/
+  .list{display:flex;flex-direction:column;gap:12px;margin-top:12px;}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    padding:15px;box-shadow:var(--shadow-sm);cursor:pointer;position:relative;
+    transition:transform .12s ease,box-shadow .2s ease;
+  }
+  .card:active{transform:scale(.985);}
+  .card .top{display:flex;gap:12px;align-items:flex-start;}
+  .logo{width:46px;height:46px;border-radius:13px;flex:none;display:grid;place-items:center;
+    color:#fff;font-family:'Bricolage Grotesque';font-weight:800;font-size:18px;}
+  .card h3{font-family:'Bricolage Grotesque';font-weight:700;font-size:16px;letter-spacing:-.3px;line-height:1.2;padding-right:26px;}
+  .card .co{font-size:12.5px;color:var(--muted);font-weight:500;margin-top:2px;}
+  .save{position:absolute;top:13px;right:13px;border:none;background:none;cursor:pointer;padding:4px;color:#c3c9c6;line-height:0;}
+  .save[aria-pressed="true"]{color:var(--sun-1);}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+  .tag{font-size:11.5px;font-weight:600;padding:5px 10px;border-radius:8px;background:var(--brand-soft);color:var(--brand-deep);}
+  .tag.sal{background:#FFF1E8;color:#C2491F;}
+  .tag.muted{background:#F1EFE8;color:var(--muted);}
+  .when{font-size:11px;color:#9aa7a2;margin-top:10px;font-weight:500;}
+
+  .empty{text-align:center;color:var(--muted);padding:48px 24px;}
+  .empty b{display:block;font-family:'Bricolage Grotesque';font-size:16px;color:var(--ink);margin-bottom:4px;}
+
+  /* Detail sheet ---------------------------------------------------*/
+  .sheet-wrap{position:absolute;inset:0;z-index:40;display:none;}
+  .sheet-wrap.open{display:block;}
+  .scrim{position:absolute;inset:0;background:rgba(15,24,21,.42);animation:fade .2s;}
+  .sheet{position:absolute;left:0;right:0;bottom:0;top:34px;background:var(--bg);
+    border-radius:24px 24px 0 0;display:flex;flex-direction:column;animation:slideUp .3s cubic-bezier(.2,.8,.2,1);overflow:hidden;}
+  @keyframes slideUp{from{transform:translateY(100%);}to{transform:none;}}
+  .sheet .bar{flex:none;padding:10px 0 4px;text-align:center;}
+  .grip{width:40px;height:5px;border-radius:5px;background:#d3d0c7;display:inline-block;}
+  .sheet-body{flex:1;overflow-y:auto;padding:6px 20px 20px;}
+  .sheet h2{font-family:'Bricolage Grotesque';font-weight:800;font-size:21px;letter-spacing:-.5px;line-height:1.18;margin-top:8px;}
+  .sheet .co2{font-size:14px;color:var(--muted);font-weight:600;margin-top:4px;display:flex;align-items:center;gap:6px;}
+  .block{margin-top:20px;}
+  .block h4{font-family:'Bricolage Grotesque';font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--brand);margin-bottom:8px;}
+  .block p{font-size:14px;color:#33423d;}
+  .block li{font-size:14px;color:#33423d;list-style:none;padding-left:20px;position:relative;margin-bottom:7px;}
+  .block li::before{content:"";position:absolute;left:2px;top:8px;width:6px;height:6px;border-radius:50%;background:var(--sun-1);}
+  .sheet-foot{flex:none;padding:12px 18px calc(14px + env(safe-area-inset-bottom));background:var(--surface);border-top:1px solid var(--line);display:flex;gap:10px;}
+  .btn{flex:1;border:none;border-radius:13px;font:inherit;font-weight:700;font-size:15px;padding:14px;cursor:pointer;transition:.15s;}
+  .btn-primary{background:var(--brand);color:#fff;}
+  .btn-primary:active{background:var(--brand-deep);}
+  .btn-primary.done{background:#dfeae6;color:var(--brand-deep);}
+  .btn-ghost{flex:none;width:52px;background:var(--surface);border:1px solid var(--line);color:var(--muted);display:grid;place-items:center;}
+  .btn-ghost[aria-pressed="true"]{color:var(--sun-1);border-color:#ffd9c7;background:#FFF6F1;}
+
+  /* Forms (publicar) ----------------------------------------------*/
+  form .field{margin-top:14px;}
+  label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:6px;}
+  input.in,select.in,textarea.in{width:100%;font:inherit;font-size:14.5px;color:var(--ink);
+    background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 13px;outline:none;transition:.15s;}
+  input.in:focus,select.in:focus,textarea.in:focus{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft);}
+  textarea.in{resize:vertical;min-height:84px;}
+  .row2{display:flex;gap:10px;}.row2>.field{flex:1;}
+  .pass-wrap{position:relative;}
+  .pass-wrap input{padding-right:46px;}
+  .eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--muted);padding:9px;line-height:0;}
+  .form-alt{font-size:13px;color:var(--muted);margin:14px 0 2px;text-align:center;}
+  .form-alt a{color:var(--brand-deep);font-weight:700;cursor:pointer;text-decoration:none;}
+  .biz-bar{font-size:12.5px;color:var(--brand-deep);background:var(--brand-soft);border-radius:10px;padding:9px 12px;margin:10px 0 0;}
+  .biz-bar b{font-weight:700;}
+  .biz-bar a{color:#b04a2a;font-weight:700;cursor:pointer;text-decoration:none;}
+  .submit{width:100%;margin-top:20px;background:var(--brand);color:#fff;border:none;border-radius:13px;font:inherit;font-weight:700;font-size:15px;padding:15px;cursor:pointer;}
+  .submit:active{background:var(--brand-deep);}
+
+  /* Cartão do plano único (anunciante) ---------------------------*/
+  .plan{position:relative;margin:14px 0 4px;background:var(--surface);border:1px solid var(--brand);
+    border-radius:18px;padding:16px;box-shadow:var(--shadow-sm);overflow:hidden;}
+  .plan .ptop{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;}
+  .plan .ptag{font-size:11px;font-weight:700;color:var(--brand-deep);background:var(--brand-soft);padding:4px 10px;border-radius:100px;text-transform:uppercase;letter-spacing:.5px;}
+  .plan .price{font-family:'Bricolage Grotesque';font-weight:800;color:var(--ink);line-height:1;}
+  .plan .price b{font-size:30px;letter-spacing:-1px;}
+  .plan .price small{font-size:12px;font-weight:600;color:var(--muted);}
+  .plan .pcompare{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.45;}
+  .plan .pcompare s{color:#b04a2a;}
+  .plan ul{margin-top:12px;display:flex;flex-direction:column;gap:7px;}
+  .plan li{list-style:none;font-size:13px;color:#33423d;padding-left:24px;position:relative;}
+  .plan li::before{content:"";position:absolute;left:3px;top:3px;width:15px;height:15px;border-radius:50%;
+    background:var(--brand-soft);}
+  .plan li::after{content:"✓";position:absolute;left:6px;top:1px;font-size:10px;font-weight:800;color:var(--brand-deep);}
+  .pay-note{font-size:11px;color:var(--muted);text-align:center;margin-top:8px;}
+
+  /* Tela de pagamento Pix ----------------------------------------*/
+  .pay-summary{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:14px;box-shadow:var(--shadow-sm);}
+  .ps-row{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--muted);padding:4px 0;}
+  .ps-row b{color:var(--ink);font-weight:600;text-align:right;}
+  .ps-total{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);margin-top:8px;padding-top:10px;}
+  .ps-total span{font-size:13px;color:var(--muted);font-weight:600;}
+  .ps-total b{font-family:'Bricolage Grotesque';font-weight:800;font-size:22px;color:var(--brand-deep);}
+  .pix-box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 16px;margin-top:12px;box-shadow:var(--shadow-sm);text-align:center;}
+  .pix-qr{width:188px;height:188px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;}
+  .pix-qr svg{width:100%;height:100%;display:block;}
+  .pix-timer-wrap{font-size:12.5px;color:var(--muted);margin-top:12px;}
+  .pix-timer-wrap b{color:#c2491f;font-weight:700;}
+  .pix-label{display:block;text-align:left;font-size:12px;font-weight:600;color:var(--muted);margin:16px 0 6px;}
+  .pix-code-row{display:flex;gap:8px;align-items:stretch;}
+  .pix-code{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:11px;color:#33423d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;}
+  .pix-copy{flex:none;border:none;background:var(--brand);color:#fff;font:inherit;font-weight:700;font-size:13px;padding:0 16px;border-radius:10px;cursor:pointer;}
+  .pix-steps{text-align:left;margin:16px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:6px;}
+  .pix-steps li{font-size:12.5px;color:#33423d;}
+
+  /* Profile --------------------------------------------------------*/
+  .profhead{display:flex;align-items:center;gap:14px;margin-top:16px;}
+  .profhead .big{width:60px;height:60px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-family:'Bricolage Grotesque';font-weight:800;font-size:24px;flex:none;}
+  .profhead .name{font-family:'Bricolage Grotesque';font-weight:700;font-size:18px;}
+  .profhead .sub{font-size:13px;color:var(--muted);}
+  .stats{display:flex;gap:10px;margin-top:18px;}
+  .stat{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;text-align:center;}
+  .stat b{font-family:'Bricolage Grotesque';font-size:22px;display:block;color:var(--brand);}
+  .stat span{font-size:11.5px;color:var(--muted);font-weight:600;}
+  .menu{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;}
+  .menu a{display:flex;justify-content:space-between;align-items:center;padding:15px;font-size:14px;font-weight:500;color:var(--ink);text-decoration:none;border-bottom:1px solid var(--line);cursor:pointer;}
+  .menu a:last-child{border-bottom:none;}
+  .menu a span{color:#c3c9c6;}
+  .demo-note{margin:18px 0 4px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.5;}
+
+  /* Sub-telas (voltar) -------------------------------------------*/
+  .subhead{display:flex;align-items:center;gap:11px;margin:12px 0 4px;}
+  .back{border:1px solid var(--line);background:var(--surface);width:38px;height:38px;border-radius:11px;display:grid;place-items:center;cursor:pointer;color:var(--ink);flex:none;}
+  .subhead h2{font-family:'Bricolage Grotesque';font-weight:800;font-size:20px;letter-spacing:-.5px;line-height:1.1;}
+  .subhead .sh-sub{font-size:12px;color:var(--muted);font-weight:500;margin-top:2px;}
+
+  /* Caixa de candidaturas (visão empresa) ------------------------*/
+  .vgroup{margin-top:18px;}
+  .vg-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:9px;padding-bottom:8px;border-bottom:1px solid var(--line);}
+  .vg-head .vg-t{font-family:'Bricolage Grotesque';font-weight:700;font-size:15px;}
+  .vg-head .vg-c{font-size:11.5px;color:var(--muted);font-weight:700;}
+  .cand{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow-sm);margin-bottom:10px;}
+  .cand .ch{display:flex;gap:12px;align-items:center;}
+  .cand .cav{width:42px;height:42px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-family:'Bricolage Grotesque';font-weight:800;font-size:15px;flex:none;}
+  .cand .cn{font-family:'Bricolage Grotesque';font-weight:700;font-size:15px;}
+  .cand .cmeta{font-size:12px;color:var(--muted);margin-top:1px;}
+  .cand .ccontact{margin-top:11px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:#33423d;}
+  .cand .ccontact a{color:var(--brand-deep);text-decoration:none;font-weight:600;}
+  .cand .cfoot{display:flex;gap:8px;margin-top:13px;align-items:center;}
+  .status{font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;transition:.15s;}
+  .status.novo{background:#FFF1E8;color:#C2491F;}
+  .status.analise{background:#EAF1FB;color:#2F5BA0;}
+  .status.contratado{background:var(--brand-soft);color:var(--brand-deep);}
+  .cbtn{font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--brand-deep);cursor:pointer;text-decoration:none;margin-left:auto;}
+
+  /* Bottom nav -----------------------------------------------------*/
+  nav{flex:none;background:var(--surface);border-top:1px solid var(--line);
+    display:flex;justify-content:space-around;align-items:center;
+    padding:9px 6px calc(9px + env(safe-area-inset-bottom));position:relative;z-index:6;}
+  .nav-btn{border:none;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;
+    font:inherit;font-size:10.5px;font-weight:600;color:#9aa7a2;padding:4px 8px;flex:1;transition:.15s;}
+  .nav-btn.active{color:var(--brand);}
+  .nav-btn svg{width:23px;height:23px;}
+  .fab{width:50px;height:50px;border-radius:16px;background:var(--ink);color:#fff;display:grid;place-items:center;
+    margin-top:-22px;box-shadow:var(--shadow);border:3px solid var(--surface);}
+  .fab svg{width:24px;height:24px;}
+
+  /* CTA de inscrição do candidato -------------------------------*/
+  .signup-cta{display:none;width:100%;align-items:center;gap:12px;margin:14px 0 2px;
+    background:var(--surface);border:1px solid var(--brand);border-left:4px solid var(--brand);
+    border-radius:14px;padding:13px 15px;cursor:pointer;box-shadow:var(--shadow-sm);text-align:left;font:inherit;}
+  .signup-cta.show{display:flex;}
+  .signup-cta .sc-tx{flex:1;}
+  .signup-cta b{font-family:'Bricolage Grotesque';font-weight:700;font-size:14.5px;color:var(--brand-deep);display:block;}
+  .signup-cta span{font-size:12px;color:var(--muted);}
+  .signup-cta svg{flex:none;color:var(--brand);}
+
+  /* Label "Vaga" no botão preto (cadastro de vaga) --------------*/
+  .nav-fab{display:flex;flex-direction:column;align-items:center;flex:1;}
+  .fab-label{font-size:10px;font-weight:700;color:var(--ink);margin-top:3px;white-space:nowrap;}
+
+  /* Dica apontando para o botão preto ---------------------------*/
+  .coach{position:absolute;left:50%;transform:translateX(-50%);bottom:84px;z-index:20;
+    background:var(--ink);color:#fff;font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:12px;
+    box-shadow:var(--shadow);max-width:78%;text-align:center;cursor:pointer;display:none;animation:fade .3s;}
+  .coach.show{display:block;}
+  .coach::after{content:"";position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);
+    width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid var(--ink);}
+
+  /* Toast ----------------------------------------------------------*/
+  .toast{position:absolute;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;font-size:13px;font-weight:600;padding:12px 18px;border-radius:12px;
+    box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.28s;z-index:50;max-width:88%;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="sunline"></div>
+
+  <header>
+    <div class="brand">
+      <div class="mark" aria-hidden="true"></div>
+      <div>
+        <b>Trampo<span>PB</span></b>
+        <div class="loc">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11z"/><circle cx="12" cy="10" r="2.3"/></svg>
+          João Pessoa, PB
+        </div>
+      </div>
+    </div>
+    <button class="avatar" onclick="go('perfil')" aria-label="Meu perfil">CS</button>
+  </header>
+
+  <main id="main">
+    <!-- INÍCIO ------------------------------------------------------>
+    <section class="view active" id="view-inicio">
+      <div class="pad">
+        <div class="greet" id="greet">Boa tarde 👋<small>Onde o trabalho nasce primeiro.</small></div>
+        <button class="signup-cta" id="signupCta" onclick="go('curriculo')">
+          <div class="sc-tx">
+            <b>Sou candidato, quero me inscrever</b>
+            <span>Crie seu currículo e candidate-se em segundos</span>
+          </div>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m9 18 6-6-6-6"/></svg>
+        </button>
+        <div class="form-alt" id="loginLinkHome" style="display:none;text-align:left;margin:8px 2px 2px">Já tem conta? <a onclick="go('login')">Entrar</a></div>
+        <div class="search" onclick="go('buscar')" role="button" tabindex="0">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aa7a2" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
+          <input placeholder="Buscar cargo, empresa ou bairro" readonly>
+        </div>
+        <div class="promo" id="promo">
+          <div class="promo-slide active">
+            <div class="wb-ic" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>
+            </div>
+            <div class="wb-tx"><b>+ de 270 empregos contratados</b><span>na Paraíba através da TrampoPB</span></div>
+          </div>
+          <div class="promo-slide quote">
+            <div class="tst-av">MV</div>
+            <div class="wb-tx"><div class="stars">★★★★★</div><b>"Contratado como auxiliar de logística em 1 semana. Deu super certo!"</b><span>Marcos Vinícius • Mangabeira, JP</span></div>
+          </div>
+          <div class="promo-slide quote">
+            <div class="tst-av">JS</div>
+            <div class="wb-tx"><div class="stars">★★★★★</div><b>"Em 5 dias já estava empregada como recepcionista. Recomendo demais."</b><span>Juliana Santos • Bessa, JP</span></div>
+          </div>
+          <div class="promo-slide quote">
+            <div class="tst-av">AP</div>
+            <div class="wb-tx"><div class="stars">★★★★★</div><b>"Achei vaga de vendedor pertinho de casa. Mudou minha vida."</b><span>Anderson Pereira • Bancários, JP</span></div>
+          </div>
+          <div class="promo-dots" id="promoDots"></div>
+        </div>
+      </div>
+      <div class="chips" id="chips"></div>
+      <div class="pad">
+        <div class="sectitle">Vagas perto de você <em id="count"></em></div>
+        <div class="list" id="feed"></div>
+      </div>
+    </section>
+
+    <!-- BUSCAR ------------------------------------------------------>
+    <section class="view" id="view-buscar">
+      <div class="pad">
+        <div class="greet" style="margin-top:10px">Buscar vagas</div>
+        <div class="search" style="margin-top:12px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9aa7a2" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>
+          <input id="searchInput" placeholder="Ex.: atendente, Manaíra, vendedor" oninput="renderSearch()">
+        </div>
+      </div>
+      <div class="chips" id="chips2"></div>
+      <div class="pad"><div class="list" id="searchList"></div></div>
+    </section>
+
+    <!-- SALVAS ------------------------------------------------------>
+    <section class="view" id="view-salvas">
+      <div class="pad">
+        <div class="greet" style="margin-top:10px">Vagas salvas</div>
+        <div class="list" id="savedList" style="margin-top:16px"></div>
+      </div>
+    </section>
+
+    <!-- PUBLICAR ----------------------------------------------------->
+    <section class="view" id="view-publicar">
+      <div class="pad">
+        <div class="greet" style="margin-top:10px">Anunciar vaga<small>Para empresas de João Pessoa e região.</small></div>
+        <div class="biz-bar" id="bizBar" style="display:none">Anunciando como <b id="bizName">—</b> · <a onclick="logoutEmpresa()">Sair</a></div>
+        <div class="plan">
+          <div class="ptop">
+            <div>
+              <span class="ptag">Plano único</span>
+              <div class="price" style="margin-top:8px"><b>R$ 39,90</b> <small>por vaga</small></div>
+            </div>
+            <div class="price" style="text-align:right"><small>Sua vaga fica</small><br><b style="font-size:20px">15 dias</b><br><small>no ar</small></div>
+          </div>
+          <ul>
+            <li>Destaque no app por 15 dias</li>
+            <li>Candidaturas organizadas no seu painel</li>
+            <li>Contato direto por e-mail e WhatsApp</li>
+          </ul>
+        </div>
+        <form id="postForm" onsubmit="publish(event)">
+          <div class="field"><label>Cargo</label><input class="in" id="f-titulo" required placeholder="Ex.: Auxiliar de atendimento"></div>
+          <div class="field"><label>Empresa</label><input class="in" id="f-empresa" required placeholder="Nome da sua empresa"></div>
+          <div class="row2">
+            <div class="field"><label>Bairro</label>
+              <select class="in" id="f-bairro"><option>Manaíra</option><option>Tambaú</option><option>Bessa</option><option>Bancários</option><option>Mangabeira</option><option>Centro</option><option>Cabo Branco</option><option>Valentina</option><option>Geisel</option><option>Jaguaribe</option></select>
+            </div>
+            <div class="field"><label>Contrato</label>
+              <select class="in" id="f-tipo"><option>CLT</option><option>Temporário</option><option>Estágio</option><option>Meio período</option><option>Freelancer</option></select>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>Categoria</label>
+              <select class="in" id="f-cat"><option>Comércio</option><option>Serviços Gerais</option><option>Atendimento</option><option>Administrativo</option><option>Saúde</option><option>TI</option><option>Estágio</option></select>
+            </div>
+            <div class="field"><label>Salário (R$)</label><input class="in" id="f-sal" placeholder="Ex.: 1.600" inputmode="numeric"></div>
+          </div>
+          <div class="field"><label>Descrição da vaga</label><textarea class="in" id="f-desc" required placeholder="Conte o dia a dia da função, jornada e o que esperar."></textarea></div>
+          <div class="field"><label>Requisitos (um por linha)</label><textarea class="in" id="f-req" placeholder="Ensino médio completo&#10;Experiência com atendimento&#10;Disponibilidade aos sábados"></textarea></div>
+          <div class="row2">
+            <div class="field"><label>E-mail para contato</label><input class="in" id="f-email" type="email" required placeholder="rh@suaempresa.com.br"></div>
+            <div class="field"><label>WhatsApp</label><input class="in" id="f-whats" required placeholder="(83) 99999-9999" inputmode="tel"></div>
+          </div>
+          <button class="submit" type="submit">Publicar vaga • R$ 39,90</button>
+          <p class="pay-note">Pagamento simulado neste protótipo — nenhuma cobrança é feita.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- PERFIL ------------------------------------------------------->
+    <section class="view" id="view-perfil">
+      <div class="pad">
+        <div class="profhead">
+          <div class="big">CS</div>
+          <div><div class="name">Carla Souza</div><div class="sub">Atendimento • Bancários, JP</div></div>
+        </div>
+        <div class="stats">
+          <div class="stat"><b id="st-applied">0</b><span>Candidaturas</span></div>
+          <div class="stat"><b id="st-saved">0</b><span>Salvas</span></div>
+          <div class="stat"><b>87%</b><span>Perfil completo</span></div>
+        </div>
+        <div class="menu">
+          <a onclick="go('curriculo')">Meu currículo <span>›</span></a>
+          <a onclick="toast('Em construção no protótipo')">Alertas de vaga <span>›</span></a>
+          <a onclick="go('candidaturas')">Candidaturas recebidas (empresa) <span>›</span></a>
+          <a onclick="openPublicar()">Sou empresa, quero publicar <span>›</span></a>
+        </div>
+        <p class="demo-note">Este é um protótipo navegável. Os dados ficam só no seu aparelho e somem ao recarregar a página.</p>
+      </div>
+    </section>
+
+    <!-- CURRÍCULO DO CANDIDATO -------------------------------------->
+    <section class="view" id="view-curriculo">
+      <div class="pad">
+        <div class="subhead">
+          <button class="back" onclick="go('perfil')" aria-label="Voltar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div><h2>Meu currículo</h2><div class="sh-sub">É isto que a empresa recebe quando você se candidata.</div></div>
+        </div>
+        <form id="cvForm" onsubmit="saveCurriculo(event)">
+          <div class="field"><label>Nome completo</label><input class="in" id="c-nome" required></div>
+          <div class="row2">
+            <div class="field"><label>WhatsApp</label><input class="in" id="c-whats" required inputmode="tel"></div>
+            <div class="field"><label>E-mail</label><input class="in" id="c-email" type="email" required></div>
+          </div>
+          <div class="field" id="cvSenhaField">
+            <label>Senha de acesso</label>
+            <div class="pass-wrap">
+              <input class="in" id="c-senha" type="password" placeholder="Crie uma senha">
+              <button type="button" class="eye" onclick="togglePass('c-senha',this)" aria-label="Mostrar senha">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field"><label>Área de interesse</label><input class="in" id="c-area"></div>
+            <div class="field"><label>Bairro</label><input class="in" id="c-bairro"></div>
+          </div>
+          <div class="field"><label>Sobre você</label><textarea class="in" id="c-sobre" placeholder="Um resumo curto de quem você é profissionalmente."></textarea></div>
+          <div class="field"><label>Experiência (uma por linha)</label><textarea class="in" id="c-exp" placeholder="Atendente em loja de varejo (2 anos)&#10;Recepção em clínica (1 ano)"></textarea></div>
+          <button class="submit" type="submit">Salvar currículo</button>
+          <div class="form-alt" id="cvLoginLink">Já tem conta? <a onclick="go('login')">Entrar</a></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- LOGIN DO CANDIDATO ------------------------------------------>
+    <section class="view" id="view-login">
+      <div class="pad">
+        <div class="subhead">
+          <button class="back" onclick="go('inicio')" aria-label="Voltar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div><h2>Entrar</h2><div class="sh-sub">Acesse sua conta de candidato.</div></div>
+        </div>
+        <form id="loginForm" onsubmit="doLogin(event)">
+          <div class="field"><label>E-mail</label><input class="in" id="l-email" type="email" required placeholder="seu@email.com"></div>
+          <div class="field">
+            <label>Senha</label>
+            <div class="pass-wrap">
+              <input class="in" id="l-senha" type="password" required placeholder="Sua senha">
+              <button type="button" class="eye" onclick="togglePass('l-senha',this)" aria-label="Mostrar senha">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="submit" type="submit">Entrar</button>
+          <div class="form-alt">Não tem conta? <a onclick="go('curriculo')">Inscreva-se</a></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- CANDIDATURAS RECEBIDAS (EMPRESA) ---------------------------->
+    <section class="view" id="view-candidaturas">
+      <div class="pad">
+        <div class="subhead">
+          <button class="back" onclick="go('perfil')" aria-label="Voltar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div><h2>Candidaturas recebidas</h2><div class="sh-sub">Visão da empresa: quem se candidatou às suas vagas.</div></div>
+        </div>
+        <div id="candList" style="margin-top:6px"></div>
+      </div>
+    </section>
+
+    <!-- PAGAMENTO PIX ----------------------------------------------->
+    <section class="view" id="view-pagamento">
+      <div class="pad">
+        <div class="subhead">
+          <button class="back" onclick="go('publicar')" aria-label="Voltar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div><h2>Pagamento via Pix</h2><div class="sh-sub">Pague para publicar sua vaga por 15 dias.</div></div>
+        </div>
+        <div class="pay-summary">
+          <div class="ps-row"><span>Anúncio de vaga</span><b id="payCargo">—</b></div>
+          <div class="ps-row"><span>Plano único • 15 dias no ar</span><b>R$ 39,90</b></div>
+          <div class="ps-total"><span>Total</span><b>R$ 39,90</b></div>
+        </div>
+        <div class="pix-box">
+          <div class="pix-qr" id="payQR"></div>
+          <div class="pix-timer-wrap">Este Pix expira em <b id="pixTimer">15:00</b></div>
+          <label class="pix-label">Pix copia e cola</label>
+          <div class="pix-code-row">
+            <span class="pix-code" id="pixCode">00020126360014BR.GOV.BCB.PIX0114+5583999990000520400005303986540539.905802BR5913TRAMPOPB LTDA6009JOAOPESSOA62070503***6304A1B2</span>
+            <button class="pix-copy" onclick="copyPix()">Copiar</button>
+          </div>
+          <ol class="pix-steps">
+            <li>Abra o app do seu banco e escolha pagar com Pix.</li>
+            <li>Escaneie o QR Code ou use o "copia e cola".</li>
+            <li>Confirme o valor de R$ 39,90 e finalize.</li>
+          </ol>
+        </div>
+        <button class="submit" onclick="confirmPayment()">Já fiz o pagamento (simular aprovação)</button>
+        <p class="pay-note">Tela simulada — nenhum pagamento real é processado neste protótipo.</p>
+      </div>
+    </section>
+
+    <!-- CADASTRO DA EMPRESA (ANUNCIANTE) ---------------------------->
+    <section class="view" id="view-empresa-cad">
+      <div class="pad">
+        <div class="subhead">
+          <button class="back" onclick="go('inicio')" aria-label="Voltar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div><h2>Conta da empresa</h2><div class="sh-sub">Crie sua conta para anunciar vagas.</div></div>
+        </div>
+        <form id="empForm" onsubmit="saveEmpresa(event)">
+          <div class="field"><label>Nome da empresa</label><input class="in" id="e-nome" required placeholder="Ex.: Supermercado Mangabeira"></div>
+          <div class="field"><label>E-mail</label><input class="in" id="e-email" type="email" required placeholder="rh@suaempresa.com.br"></div>
+          <div class="field">
+            <label>Senha de acesso</label>
+            <div class="pass-wrap">
+              <input class="in" id="e-senha" type="password" placeholder="Crie uma senha">
+              <button type="button" class="eye" onclick="togglePass('e-senha',this)" aria-label="Mostrar senha">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="submit" type="submit">Criar conta e anunciar</button>
+          <div class="form-alt">Já tem conta? <a onclick="go('empresa-login')">Entrar</a></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- LOGIN DA EMPRESA (ANUNCIANTE) ------------------------------->
+    <section class="view" id="view-empresa-login">
+      <div class="pad">
+        <div class="subhead">
+          <button class="back" onclick="go('inicio')" aria-label="Voltar">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <div><h2>Entrar — empresa</h2><div class="sh-sub">Acesse sua conta para gerenciar suas vagas.</div></div>
+        </div>
+        <form id="empLoginForm" onsubmit="doEmpresaLogin(event)">
+          <div class="field"><label>E-mail</label><input class="in" id="el-email" type="email" required placeholder="rh@suaempresa.com.br"></div>
+          <div class="field">
+            <label>Senha</label>
+            <div class="pass-wrap">
+              <input class="in" id="el-senha" type="password" required placeholder="Sua senha">
+              <button type="button" class="eye" onclick="togglePass('el-senha',this)" aria-label="Mostrar senha">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+          </div>
+          <button class="submit" type="submit">Entrar</button>
+          <div class="form-alt">Não tem conta? <a onclick="go('empresa-cad')">Criar conta</a></div>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- Detail sheet -->
+  <div class="sheet-wrap" id="sheetWrap">
+    <div class="scrim" onclick="closeSheet()"></div>
+    <div class="sheet" role="dialog" aria-modal="true">
+      <div class="bar" onclick="closeSheet()"><span class="grip"></span></div>
+      <div class="sheet-body" id="sheetBody"></div>
+      <div class="sheet-foot">
+        <button class="btn-ghost" id="sheetSave" aria-pressed="false" onclick="toggleSaveCurrent()" aria-label="Salvar vaga">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        </button>
+        <button class="btn btn-primary" id="sheetApply" onclick="applyCurrent()">Candidatar-se</button>
+      </div>
+    </div>
+  </div>
+
+  <nav>
+    <button class="nav-btn active" data-tab="inicio" onclick="go('inicio')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>Início</button>
+    <button class="nav-btn" data-tab="buscar" onclick="go('buscar')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4-4"/></svg>Buscar</button>
+    <div class="nav-fab">
+      <button class="fab" onclick="openPublicar()" aria-label="Cadastrar vaga (empresa)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg></button>
+      <span class="fab-label">Anunciar vaga</span>
+    </div>
+    <button class="nav-btn" data-tab="salvas" onclick="go('salvas')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>Salvas</button>
+    <button class="nav-btn" data-tab="perfil" onclick="go('perfil')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>Perfil</button>
+  </nav>
+
+  <div class="coach" id="coach" onclick="dismissCoach()">É uma empresa? Cadastre sua vaga no botão preto ↓</div>
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+/* ---------- Dados de exemplo (vagas realistas de João Pessoa) ---------- */
+const COLORS=['#0E7C66','#FF7A4D','#3F6FB0','#C2491F','#7A5BB0','#0E7C66','#D08A1E','#3FA08C'];
+let vagas=[
+  {t:'Atendente de loja',co:'Rede Manaíra Calçados',b:'Manaíra',sal:'1.500 + comissão',tipo:'CLT',cat:'Comércio',when:'há 2 dias',
+   desc:'Atendimento ao cliente no salão de vendas, organização de vitrine e fechamento de caixa. Loja em shopping, escala 6x1.',
+   req:['Ensino médio completo','Experiência com vendas (desejável)','Disponibilidade para trabalhar aos sábados'],
+   ben:['Vale-transporte','Comissão sobre vendas','Desconto em produtos']},
+  {t:'Auxiliar de serviços gerais',co:'Condomínio Altiplano Park',b:'Cabo Branco',sal:'1.412',tipo:'CLT',cat:'Serviços Gerais',when:'há 5 horas',
+   desc:'Limpeza e conservação das áreas comuns do condomínio, apoio à zeladoria e pequenos reparos.',
+   req:['Ensino fundamental completo','Experiência em limpeza','Morar próximo à região (desejável)'],
+   ben:['Vale-alimentação R$ 550','Vale-transporte','Uniforme']},
+  {t:'Recepcionista de clínica',co:'Clínica Vida Bessa',b:'Bessa',sal:'1.600',tipo:'CLT',cat:'Saúde',when:'há 1 dia',
+   desc:'Recepção de pacientes, agendamento de consultas por telefone e WhatsApp, organização de prontuários.',
+   req:['Informática básica','Boa comunicação','Experiência em recepção (desejável)'],
+   ben:['Plano de saúde','Vale-transporte','Vale-alimentação']},
+  {t:'Vendedor(a) externo',co:'Distribuidora Tambiá',b:'Centro',sal:'1.800 + comissão',tipo:'CLT',cat:'Comércio',when:'há 3 dias',
+   desc:'Visita a clientes na Grande João Pessoa, prospecção e fechamento de pedidos. Roteiro definido pela empresa.',
+   req:['CNH categoria A ou B','Experiência com vendas externas','Perfil comunicativo'],
+   ben:['Ajuda de custo combustível','Comissão','Celular corporativo']},
+  {t:'Auxiliar administrativo',co:'Xcon Construção e Serviços',b:'Jaguaribe',sal:'1.550',tipo:'CLT',cat:'Administrativo',when:'há 4 dias',
+   desc:'Atender telefones, organizar documentos, lançar notas e dar apoio ao setor financeiro.',
+   req:['Ensino médio completo','Pacote Office','Organização e proatividade'],
+   ben:['Vale-transporte','Vale-refeição']},
+  {t:'Estágio em marketing',co:'Agência Litoral Digital',b:'Tambaú',sal:'800 (bolsa)',tipo:'Estágio',cat:'Estágio',when:'há 6 dias',
+   desc:'Apoio na criação de conteúdo para redes sociais, agendamento de posts e acompanhamento de métricas.',
+   req:['Cursando Publicidade, Marketing ou ADM','Noção de Canva / redes sociais','Disponibilidade de 6h/dia'],
+   ben:['Bolsa-auxílio','Vale-transporte','Horário flexível']},
+  {t:'Desenvolvedor(a) front-end Jr',co:'Paraíba Tech Hub',b:'Bancários',sal:'2.800',tipo:'CLT',cat:'TI',when:'há 1 dia',
+   desc:'Manutenção e evolução de interfaces web em React, trabalho híbrido com 2 dias presenciais no bairro dos Bancários.',
+   req:['HTML, CSS e JavaScript','Noção de React','Versionamento com Git'],
+   ben:['Híbrido','Plano de saúde','Auxílio home office']},
+  {t:'Operador(a) de caixa',co:'Supermercado Mangabeira',b:'Mangabeira',sal:'1.412',tipo:'CLT',cat:'Comércio',when:'há 8 horas',
+   desc:'Registro de produtos, recebimento de pagamentos e atendimento no caixa. Escala 6x1 com folga rotativa.',
+   req:['Ensino médio completo','Agilidade com números','Disponibilidade de horário'],
+   ben:['Vale-alimentação','Cesta básica','Vale-transporte']},
+];
+
+const CATS=['Todas','Comércio','Serviços Gerais','Atendimento','Administrativo','Saúde','TI','Estágio'];
+let activeCat='Todas';
+const saved=new Set();
+const applied=new Set();
+let currentId=null;
+
+/* IDs estáveis para cada vaga (não dependem da posição na lista) */
+let nextId=1;
+vagas.forEach(v=>v.id=nextId++);
+
+/* Candidato logado — o que vira "currículo" enviado à empresa */
+const me={
+  registered:false,
+  nome:'',whats:'',email:'',area:'',bairro:'',sobre:'',exp:''
+};
+function initials(n){return n.trim().split(/\s+/).map(p=>p[0]).slice(0,2).join('').toUpperCase();}
+
+/* Conta da empresa (anunciante) */
+const biz={registered:false,nome:'',email:'',senha:''};
+
+/* Candidaturas recebidas (visão empresa): vagaId + dados do candidato */
+const STATUS={novo:'Novo',analise:'Em análise',contratado:'Contratado'};
+let applications=[];
+function seed(){
+  const a=vagas.find(v=>v.t==='Atendente de loja');
+  const c=vagas.find(v=>v.t==='Operador(a) de caixa');
+  applications.push(
+    {vagaId:a.id,name:'João Marques',area:'Comércio',bairro:'Mangabeira',whats:'(83) 99654-2210',email:'joao.marques@email.com',sobre:'Experiência em vendas e atendimento ao público.',when:'há 1 dia',status:'novo'},
+    {vagaId:a.id,name:'Beatriz Lima',area:'Atendimento',bairro:'Cristo Redentor',whats:'(83) 98123-7745',email:'bia.lima@email.com',sobre:'Comunicativa, com foco em metas de venda.',when:'há 3 horas',status:'analise'},
+    {vagaId:c.id,name:'Rafael Nunes',area:'Comércio',bairro:'Valentina',whats:'(83) 99777-1188',email:'rafael.nunes@email.com',sobre:'Operador de caixa há 3 anos no varejo.',when:'há 5 horas',status:'novo'}
+  );
+}
+
+/* ---------- Helpers de render ---------- */
+function vagaCard(v){
+  const isSaved=saved.has(v.id), isApplied=applied.has(v.id);
+  return `<article class="card" onclick="openSheet(${v.id})">
+    <button class="save" aria-pressed="${isSaved}" aria-label="Salvar" onclick="event.stopPropagation();toggleSave(${v.id})">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="${isSaved?'currentColor':'none'}" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+    </button>
+    <div class="top">
+      <div class="logo" style="background:${COLORS[v.id%COLORS.length]}">${v.co[0]}</div>
+      <div><h3>${v.t}</h3><div class="co">${v.co}</div></div>
+    </div>
+    <div class="meta">
+      <span class="tag">📍 ${v.b}</span>
+      <span class="tag sal">R$ ${v.sal}</span>
+      <span class="tag muted">${v.tipo}</span>
+    </div>
+    <div class="when">${v.when}${isApplied?' • <span style="color:var(--brand);font-weight:700">Candidatura enviada</span>':''}</div>
+  </article>`;
+}
+
+function renderChips(){
+  const html=CATS.map(c=>`<button class="chip" aria-pressed="${c===activeCat}" onclick="setCat('${c}')">${c}</button>`).join('');
+  document.getElementById('chips').innerHTML=html;
+  document.getElementById('chips2').innerHTML=html;
+}
+function setCat(c){activeCat=c;renderChips();renderFeed();renderSearch();}
+
+function renderFeed(){
+  const f=vagas.filter(v=>activeCat==='Todas'||v.cat===activeCat);
+  document.getElementById('count').textContent=f.length+' vagas';
+  document.getElementById('feed').innerHTML=f.map(vagaCard).join('')||emptyMsg('Nenhuma vaga nesta categoria ainda.');
+}
+function renderSearch(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const f=vagas.filter(v=>{
+    const inCat=activeCat==='Todas'||v.cat===activeCat;
+    const txt=(v.t+v.co+v.b+v.cat).toLowerCase();
+    return inCat && txt.includes(q);
+  });
+  document.getElementById('searchList').innerHTML=f.map(vagaCard).join('')||emptyMsg('Nada encontrado. Tente outro termo ou bairro.');
+}
+function renderSaved(){
+  const f=vagas.filter(v=>saved.has(v.id));
+  document.getElementById('savedList').innerHTML=f.length?f.map(vagaCard).join(''):
+    emptyMsg('Nenhuma vaga salva.','Toque no coração de uma vaga para guardá-la aqui.');
+  document.getElementById('st-saved').textContent=saved.size;
+}
+function emptyMsg(t,s=''){return `<div class="empty"><b>${t}</b>${s}</div>`;}
+
+/* ---------- Save / apply ---------- */
+function toggleSave(id){
+  saved.has(id)?saved.delete(id):saved.add(id);
+  toast(saved.has(id)?'Vaga salva':'Removida das salvas');
+  refresh();
+}
+function toggleSaveCurrent(){toggleSave(currentId);syncSheetButtons();}
+function applyCurrent(){
+  if(!me.registered){closeSheet();toast('Inscreva-se como candidato para se candidatar');go('curriculo');return;}
+  if(applied.has(currentId)){toast('Você já se candidatou a esta vaga');return;}
+  applied.add(currentId);
+  applications.push({vagaId:currentId,name:me.nome,area:me.area,bairro:me.bairro,
+    whats:me.whats,email:me.email,sobre:me.sobre,when:'agora',status:'novo'});
+  document.getElementById('st-applied').textContent=applied.size;
+  toast('Candidatura enviada ✓ A empresa foi avisada.');
+  syncSheetButtons();refresh();
+}
+function syncSheetButtons(){
+  const ap=document.getElementById('sheetApply');
+  ap.textContent=applied.has(currentId)?'Candidatura enviada ✓':'Candidatar-se';
+  ap.classList.toggle('done',applied.has(currentId));
+  document.getElementById('sheetSave').setAttribute('aria-pressed',saved.has(currentId));
+}
+
+/* ---------- Detail sheet ---------- */
+function openSheet(id){
+  currentId=id;const v=vagas.find(x=>x.id===id);
+  document.getElementById('sheetBody').innerHTML=`
+    <h2>${v.t}</h2>
+    <div class="co2"><div class="logo" style="width:24px;height:24px;border-radius:7px;font-size:12px;background:${COLORS[v.id%COLORS.length]}">${v.co[0]}</div>${v.co}</div>
+    <div class="meta" style="margin-top:14px">
+      <span class="tag">📍 ${v.b}, João Pessoa</span>
+      <span class="tag sal">R$ ${v.sal}</span>
+      <span class="tag muted">${v.tipo}</span>
+      <span class="tag muted">${v.cat}</span>
+    </div>
+    <div class="block"><h4>Sobre a vaga</h4><p>${v.desc}</p></div>
+    <div class="block"><h4>Requisitos</h4><ul>${v.req.map(r=>`<li>${r}</li>`).join('')}</ul></div>
+    ${v.ben?`<div class="block"><h4>Benefícios</h4><ul>${v.ben.map(b=>`<li>${b}</li>`).join('')}</ul></div>`:''}
+    ${(v.email||v.whats)?`<div class="block"><h4>Contato da empresa</h4><ul>${v.email?`<li>E-mail: ${v.email}</li>`:''}${v.whats?`<li>WhatsApp: ${v.whats}</li>`:''}</ul></div>`:''}
+    <div class="block"><h4>Publicado</h4><p>${v.when} • via TrampoPB${v.validade?` • anúncio ativo, expira em ${v.validade} dias`:''}</p></div>`;
+  syncSheetButtons();
+  document.getElementById('sheetWrap').classList.add('open');
+}
+function closeSheet(){document.getElementById('sheetWrap').classList.remove('open');}
+
+/* ---------- Publicar (vai para pagamento) ---------- */
+let pendingVaga=null;
+function publish(e){
+  e.preventDefault();
+  const g=id=>document.getElementById(id).value.trim();
+  const req=g('f-req').split('\n').map(s=>s.trim()).filter(Boolean);
+  pendingVaga={t:g('f-titulo'),co:g('f-empresa'),b:g('f-bairro'),
+    sal:g('f-sal')||'A combinar',tipo:g('f-tipo'),cat:g('f-cat'),when:'agora',
+    desc:g('f-desc'),req:req.length?req:['Não informado'],ben:null,
+    email:g('f-email'),whats:g('f-whats'),validade:15};
+  go('pagamento');
+}
+
+/* ---------- Pagamento Pix (simulado) ---------- */
+function renderPagamento(){
+  if(!pendingVaga){go('publicar');return;}
+  document.getElementById('payCargo').textContent=pendingVaga.t;
+  document.getElementById('payQR').innerHTML=buildQR();
+  startPixTimer();
+}
+function buildQR(){
+  const N=25,m=7,pad=1,sz=(N+pad*2)*m;
+  const finders=[[0,0],[0,N-7],[N-7,0]];
+  const finderFill=(r,c)=>{
+    for(const [R0,C0] of finders){
+      const lr=r-R0,lc=c-C0;
+      if(lr>=0&&lr<=6&&lc>=0&&lc<=6)
+        return (lr===0||lr===6||lc===0||lc===6)||(lr>=2&&lr<=4&&lc>=2&&lc<=4);
+    }
+    return null;
+  };
+  let seed=7,rects='';
+  const rnd=()=>{seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;};
+  for(let r=0;r<N;r++)for(let c=0;c<N;c++){
+    const f=finderFill(r,c);
+    const on=f!==null?f:rnd()>0.52;
+    if(on)rects+=`<rect x="${(c+pad)*m}" y="${(r+pad)*m}" width="${m}" height="${m}"/>`;
+  }
+  return `<svg viewBox="0 0 ${sz} ${sz}" xmlns="http://www.w3.org/2000/svg"><rect width="${sz}" height="${sz}" fill="#fff"/><g fill="#14201D">${rects}</g></svg>`;
+}
+let pixTimer,pixLeft;
+function startPixTimer(){
+  pixLeft=15*60;
+  const el=document.getElementById('pixTimer');
+  const tick=()=>{
+    const mm=String(Math.floor(pixLeft/60)).padStart(2,'0');
+    const ss=String(pixLeft%60).padStart(2,'0');
+    el.textContent=pixLeft<0?'Expirado':mm+':'+ss;
+    if(pixLeft<0){clearInterval(pixTimer);return;}
+    pixLeft--;
+  };
+  clearInterval(pixTimer);tick();pixTimer=setInterval(tick,1000);
+}
+function stopPixTimer(){clearInterval(pixTimer);}
+function copyPix(){
+  const code=document.getElementById('pixCode').textContent;
+  try{navigator.clipboard&&navigator.clipboard.writeText(code);}catch(e){}
+  toast('Código Pix copiado');
+}
+function confirmPayment(){
+  if(!pendingVaga)return;
+  pendingVaga.id=nextId++;
+  vagas.unshift(pendingVaga);
+  pendingVaga=null;stopPixTimer();
+  document.getElementById('postForm').reset();
+  refresh();go('inicio');
+  toast('Pagamento aprovado ✓ Vaga no ar por 15 dias.');
+}
+
+/* ---------- Currículo do candidato ---------- */
+function renderCurriculo(){
+  const s=(id,val)=>document.getElementById(id).value=val;
+  s('c-nome',me.nome);s('c-whats',me.whats);s('c-email',me.email);
+  s('c-area',me.area);s('c-bairro',me.bairro);s('c-sobre',me.sobre);s('c-exp',me.exp);
+  const novo=!me.registered;
+  document.getElementById('cvSenhaField').style.display=novo?'':'none';
+  document.getElementById('cvLoginLink').style.display=novo?'':'none';
+  document.getElementById('c-senha').value='';
+  document.querySelector('#view-curriculo .subhead h2').textContent=novo?'Inscrição de candidato':'Meu currículo';
+  document.querySelector('#view-curriculo .sh-sub').textContent=novo?'Crie seu currículo para começar a se candidatar.':'É isto que a empresa recebe quando você se candidata.';
+  document.querySelector('#cvForm .submit').textContent=novo?'Concluir inscrição':'Salvar currículo';
+}
+function saveCurriculo(e){
+  e.preventDefault();
+  const g=id=>document.getElementById(id).value.trim();
+  const novo=!me.registered;
+  if(novo)me.senha=document.getElementById('c-senha').value;
+  me.nome=g('c-nome');me.whats=g('c-whats');me.email=g('c-email');
+  me.area=g('c-area');me.bairro=g('c-bairro');me.sobre=g('c-sobre');me.exp=g('c-exp');
+  me.registered=true;
+  updateProfileHeader();renderGreeting();
+  toast(novo?'Inscrição concluída ✓ Bem-vindo(a)!':'Currículo salvo ✓');
+  go('inicio');
+}
+/* ---------- Login (simulado) ---------- */
+function renderLogin(){
+  document.getElementById('l-email').value='';
+  document.getElementById('l-senha').value='';
+}
+function doLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('l-email').value.trim();
+  if(email)me.email=email;
+  if(!me.nome)me.nome=(email.split('@')[0]||'Candidato');
+  me.registered=true;
+  updateProfileHeader();renderGreeting();
+  toast('Login realizado ✓ (simulado)');
+  go('inicio');
+}
+/* ---------- Conta da empresa (anunciante) ---------- */
+function openPublicar(){ biz.registered?go('publicar'):go('empresa-cad'); }
+function renderPublicar(){
+  const bar=document.getElementById('bizBar');
+  if(biz.registered){
+    bar.style.display='';
+    document.getElementById('bizName').textContent=biz.nome;
+    const f=document.getElementById('f-empresa');
+    if(f&&!f.value)f.value=biz.nome;
+  }else{bar.style.display='none';}
+}
+function renderEmpresaCad(){
+  document.getElementById('e-nome').value=biz.nome||'';
+  document.getElementById('e-email').value=biz.email||'';
+  document.getElementById('e-senha').value='';
+}
+function saveEmpresa(e){
+  e.preventDefault();
+  biz.nome=document.getElementById('e-nome').value.trim();
+  biz.email=document.getElementById('e-email').value.trim();
+  biz.senha=document.getElementById('e-senha').value;
+  biz.registered=true;
+  toast('Conta da empresa criada ✓');
+  go('publicar');
+}
+function renderEmpresaLogin(){
+  document.getElementById('el-email').value='';
+  document.getElementById('el-senha').value='';
+}
+function doEmpresaLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('el-email').value.trim();
+  if(email)biz.email=email;
+  if(!biz.nome)biz.nome=(email.split('@')[0]||'Minha empresa');
+  biz.registered=true;
+  toast('Login da empresa ✓ (simulado)');
+  go('publicar');
+}
+function logoutEmpresa(){
+  biz.registered=false;
+  toast('Você saiu da conta da empresa');
+  go('inicio');
+}
+
+function togglePass(id,btn){
+  const inp=document.getElementById(id);
+  const show=inp.type==='password';
+  inp.type=show?'text':'password';
+  btn.innerHTML=show
+    ?'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.9 4.2A9.5 9.5 0 0 1 12 4c6.5 0 10 7 10 7a17 17 0 0 1-2.2 3.2M6.7 6.7A17 17 0 0 0 2 11s3.5 7 10 7a9.5 9.5 0 0 0 3.3-.6M3 3l18 18M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>'
+    :'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+}
+function updateProfileHeader(){
+  const reg=me.registered;
+  document.querySelector('#view-perfil .big').innerHTML=reg?initials(me.nome):personSvg(26);
+  document.querySelector('.avatar').innerHTML=reg?initials(me.nome):personSvg(18);
+  document.querySelector('#view-perfil .name').textContent=reg?me.nome:'Você ainda não tem conta';
+  document.querySelector('#view-perfil .sub').textContent=reg?(me.area+' • '+me.bairro+', JP'):'Inscreva-se para se candidatar às vagas';
+}
+function renderGreeting(){
+  const h=new Date().getHours();
+  const period=h<12?'Bom dia':h<18?'Boa tarde':'Boa noite';
+  const greet=document.getElementById('greet');
+  const cta=document.getElementById('signupCta');
+  if(me.registered){
+    greet.innerHTML=period+', '+me.nome.split(' ')[0]+' 👋<small>Onde o trabalho nasce primeiro.</small>';
+    cta.classList.remove('show');
+  }else{
+    greet.innerHTML=period+' 👋<small>Encontre seu próximo trampo na Paraíba.</small>';
+    cta.classList.add('show');
+  }
+  document.getElementById('loginLinkHome').style.display=me.registered?'none':'';
+}
+function personSvg(s){return `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>`;}
+function dismissCoach(){document.getElementById('coach').classList.remove('show');}
+
+/* ---------- Candidaturas recebidas (visão empresa) ---------- */
+function renderCandidaturas(){
+  const box=document.getElementById('candList');
+  if(!applications.length){
+    box.innerHTML=emptyMsg('Nenhuma candidatura ainda.','Quando alguém se candidatar às suas vagas, aparece aqui — com e-mail e WhatsApp para contato.');
+    return;
+  }
+  const groups={};
+  applications.forEach((a,idx)=>{(groups[a.vagaId]=groups[a.vagaId]||[]).push(idx);});
+  let html='';
+  Object.keys(groups).forEach(vid=>{
+    const v=vagas.find(x=>x.id==vid);
+    const idxs=groups[vid];
+    html+=`<div class="vgroup"><div class="vg-head"><span class="vg-t">${v?v.t:'Vaga removida'}</span><span class="vg-c">${idxs.length} candidato(s)</span></div>`;
+    html+=idxs.map(candCard).join('');
+    html+='</div>';
+  });
+  box.innerHTML=html;
+}
+function candCard(i){
+  const a=applications[i];
+  const fone=a.whats.replace(/\D/g,'');
+  return `<div class="cand">
+    <div class="ch"><div class="cav">${initials(a.name)}</div>
+      <div><div class="cn">${a.name}</div><div class="cmeta">${a.area} • ${a.bairro} • ${a.when}</div></div></div>
+    <div class="ccontact">
+      <span>${a.sobre}</span>
+      <span>📱 <a href="https://wa.me/55${fone}" target="_blank" rel="noopener">${a.whats}</a></span>
+      <span>✉️ <a href="mailto:${a.email}">${a.email}</a></span>
+    </div>
+    <div class="cfoot">
+      <button class="status ${a.status}" onclick="cycleStatus(${i})">${STATUS[a.status]}</button>
+      <a class="cbtn" href="https://wa.me/55${fone}" target="_blank" rel="noopener">Chamar no WhatsApp</a>
+    </div>
+  </div>`;
+}
+function cycleStatus(i){
+  const order=['novo','analise','contratado'];
+  const a=applications[i];
+  a.status=order[(order.indexOf(a.status)+1)%order.length];
+  renderCandidaturas();
+  toast('Status: '+STATUS[a.status]);
+}
+
+/* ---------- Navegação ---------- */
+function go(tab){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+tab).classList.add('active');
+  const lit={curriculo:'perfil',candidaturas:'perfil',login:'perfil'}[tab]||tab;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===lit));
+  if(tab==='salvas')renderSaved();
+  if(tab==='buscar')renderSearch();
+  if(tab==='curriculo')renderCurriculo();
+  if(tab==='login')renderLogin();
+  if(tab==='publicar')renderPublicar();
+  if(tab==='empresa-cad')renderEmpresaCad();
+  if(tab==='empresa-login')renderEmpresaLogin();
+  if(tab==='candidaturas')renderCandidaturas();
+  if(tab==='pagamento'){renderPagamento();}else{stopPixTimer();}
+  document.getElementById('main').scrollTop=0;
+}
+
+function refresh(){renderFeed();renderSearch();renderSaved();renderCandidaturas();}
+
+/* ---------- Toast ---------- */
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ---------- Carrossel de provas sociais ---------- */
+function initPromo(){
+  const slides=[...document.querySelectorAll('#promo .promo-slide')];
+  const dotsBox=document.getElementById('promoDots');
+  let i=0,timer;
+  dotsBox.innerHTML=slides.map((_,k)=>`<button aria-label="Slide ${k+1}" onclick="promoGo(${k})"></button>`).join('');
+  const dots=[...dotsBox.children];
+  window.promoShow=k=>{
+    i=(k+slides.length)%slides.length;
+    slides.forEach((s,n)=>s.classList.toggle('active',n===i));
+    dots.forEach((d,n)=>d.classList.toggle('on',n===i));
+  };
+  window.promoGo=k=>{promoShow(k);restart();};
+  function restart(){clearInterval(timer);timer=setInterval(()=>promoShow(i+1),3800);}
+  promoShow(0);restart();
+}
+
+/* ---------- Init ---------- */
+seed();
+updateProfileHeader();renderGreeting();
+renderChips();renderFeed();renderSaved();renderCandidaturas();
+initPromo();
+/* dica apontando para o botão preto de cadastrar vaga */
+setTimeout(()=>document.getElementById('coach').classList.add('show'),900);
+setTimeout(dismissCoach,6500);
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Configuração de deploy do TrampoPB na Netlify (Next.js).
+# As variáveis de ambiente (Supabase, Mercado Pago, service_role) são definidas
+# no painel da Netlify, NUNCA neste arquivo.
+
+[build]
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# Runtime oficial do Next.js na Netlify (SSR, rotas de API, middleware/proxy).
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
