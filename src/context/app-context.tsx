@@ -78,7 +78,7 @@ interface AppState {
   ) => Promise<void>;
   sairConta: () => Promise<void>;
   definirCobranca: (c: CobrancaPix | null) => void;
-  recarregarVagas: () => Promise<void>;
+  recarregarVagas: (opcoes?: { silencioso?: boolean }) => Promise<void>;
 }
 
 const AppCtx = createContext<AppState | null>(null);
@@ -132,29 +132,52 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, [supabase]);
 
   // --- Vagas (público) + métrica de contratados -----------------------------
-  const recarregarVagas = useCallback(async () => {
-    if (!supabase) {
-      setCarregandoVagas(false);
-      return;
-    }
-    setCarregandoVagas(true);
-    try {
-      const [lista, total] = await Promise.all([
-        listarVagasAtivas(),
-        totalContratadosDb(),
-      ]);
-      setVagas(lista);
-      setTotalContratados(total);
-    } catch {
-      // mantém o que tinha; o feed só fica vazio
-    } finally {
-      setCarregandoVagas(false);
-    }
-  }, [supabase]);
+  const recarregarVagas = useCallback(
+    async (opcoes?: { silencioso?: boolean }) => {
+      if (!supabase) {
+        setCarregandoVagas(false);
+        return;
+      }
+      // Em recarga silenciosa (ao voltar pro app) não pisca "Carregando".
+      if (!opcoes?.silencioso) setCarregandoVagas(true);
+      try {
+        const [lista, total] = await Promise.all([
+          listarVagasAtivas(),
+          totalContratadosDb(),
+        ]);
+        setVagas(lista);
+        setTotalContratados(total);
+      } catch {
+        // mantém o que tinha; o feed só fica vazio
+      } finally {
+        if (!opcoes?.silencioso) setCarregandoVagas(false);
+      }
+    },
+    [supabase]
+  );
 
   useEffect(() => {
     void recarregarVagas();
   }, [recarregarVagas]);
+
+  // Atualiza o feed quando o usuário volta pro app/aba (sem piscar a tela).
+  useEffect(() => {
+    if (!supabase) return;
+    let ultimo = Date.now();
+    const aoVoltar = () => {
+      if (document.visibilityState !== "visible") return;
+      const agora = Date.now();
+      if (agora - ultimo < 3000) return; // evita recarga duplicada
+      ultimo = agora;
+      void recarregarVagas({ silencioso: true });
+    };
+    window.addEventListener("focus", aoVoltar);
+    document.addEventListener("visibilitychange", aoVoltar);
+    return () => {
+      window.removeEventListener("focus", aoVoltar);
+      document.removeEventListener("visibilitychange", aoVoltar);
+    };
+  }, [supabase, recarregarVagas]);
 
   // --- Dados do candidato logado (currículo + candidaturas já enviadas) -----
   useEffect(() => {

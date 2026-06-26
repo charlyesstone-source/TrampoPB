@@ -401,6 +401,34 @@ main.appmain {
   font-weight: 600;
   color: var(--muted);
 }
+.sec-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.refresh-btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  line-height: 0;
+}
+.refresh-btn:active {
+  color: var(--brand);
+}
+.refresh-btn.girando svg {
+  animation: girar 0.8s linear infinite;
+}
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 /* Vaga card ------------------------------------------------------*/
 .list {

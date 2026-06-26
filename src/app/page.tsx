@@ -3,16 +3,23 @@
 import Link from "next/link";
 import { useState } from "react";
 import { CategoryChips } from "@/components/category-chips";
-import { IconChevronRight, IconSearch } from "@/components/icons";
+import { IconChevronRight, IconRefresh, IconSearch } from "@/components/icons";
 import { PromoCarousel } from "@/components/promo-carousel";
 import { ListaVagas } from "@/components/vaga-card";
 import { useApp } from "@/context/app-context";
 import { useSaudacao } from "@/lib/use-saudacao";
 
 export default function InicioPage() {
-  const { vagas, carregandoVagas, candidato } = useApp();
+  const { vagas, carregandoVagas, candidato, recarregarVagas } = useApp();
   const saudacao = useSaudacao();
   const [cat, setCat] = useState("Todas");
+  const [atualizando, setAtualizando] = useState(false);
+
+  const atualizar = async () => {
+    setAtualizando(true);
+    await recarregarVagas({ silencioso: true });
+    setAtualizando(false);
+  };
 
   const filtradas = vagas.filter((v) => cat === "Todas" || v.categoria === cat);
 
@@ -64,8 +71,19 @@ export default function InicioPage() {
 
       <div className="pad">
         <div className="sectitle">
-          Vagas perto de você{" "}
-          <em>{carregandoVagas ? "…" : `${filtradas.length} vagas`}</em>
+          Vagas perto de você
+          <span className="sec-right">
+            <em>{carregandoVagas ? "…" : `${filtradas.length} vagas`}</em>
+            <button
+              type="button"
+              className={`refresh-btn${atualizando ? " girando" : ""}`}
+              onClick={atualizar}
+              disabled={atualizando}
+              aria-label="Atualizar vagas"
+            >
+              <IconRefresh width={16} height={16} />
+            </button>
+          </span>
         </div>
         {carregandoVagas ? (
           <div className="empty">

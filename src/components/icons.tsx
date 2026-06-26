@@ -87,6 +87,15 @@ export function IconCheckCircle(p: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function IconRefresh(p: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} strokeWidth={2.2} {...p}>
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" />
+      <path d="M21 3v6h-6" />
+    </svg>
+  );
+}
+
 export function IconEye(p: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} strokeWidth={2} {...p}>
