@@ -13,7 +13,7 @@ export function Header() {
   // Avatar reflete quem está conectado (candidato OU empresa).
   const ehEmpresa = empresa.registrada;
   const nome = candidato.registrado ? candidato.nome : ehEmpresa ? empresa.nome : "";
-  const destino = ehEmpresa ? "/candidaturas" : "/perfil";
+  const destino = ehEmpresa ? "/empresa" : "/perfil";
   const rotulo = ehEmpresa
     ? `Empresa conectada: ${empresa.nome}`
     : candidato.registrado

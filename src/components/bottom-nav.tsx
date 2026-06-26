@@ -5,9 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/context/app-context";
 import {
   IconBookmark,
+  IconBriefcase,
   IconHome,
   IconPlus,
-  IconSearch,
   IconUser,
 } from "./icons";
 
@@ -20,13 +20,17 @@ export function BottomNav() {
   /** Rotas que mantêm uma aba acesa mesmo sem serem a aba em si. */
   const aba = (() => {
     if (pathname === "/") return "inicio";
-    if (pathname.startsWith("/buscar")) return "buscar";
     if (pathname.startsWith("/salvas")) return "salvas";
+    if (
+      pathname.startsWith("/empresa") ||
+      pathname.startsWith("/anuncios") ||
+      pathname.startsWith("/candidaturas")
+    )
+      return "empresa";
     if (
       pathname.startsWith("/perfil") ||
       pathname.startsWith("/curriculo") ||
-      pathname.startsWith("/entrar") ||
-      pathname.startsWith("/candidaturas")
+      pathname.startsWith("/entrar")
     )
       return "perfil";
     return "";
@@ -48,12 +52,12 @@ export function BottomNav() {
         Início
       </Link>
       <Link
-        href="/buscar"
-        className={`nav-btn${aba === "buscar" ? " active" : ""}`}
-        aria-current={aba === "buscar" ? "page" : undefined}
+        href="/empresa"
+        className={`nav-btn${aba === "empresa" ? " active" : ""}`}
+        aria-current={aba === "empresa" ? "page" : undefined}
       >
-        <IconSearch />
-        Buscar
+        <IconBriefcase />
+        Empresa
       </Link>
       <div className="nav-fab">
         <button

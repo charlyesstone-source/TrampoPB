@@ -58,12 +58,6 @@ export default function PerfilPage() {
           <a onClick={() => mostrarToast("Em construção (próxima fase)")}>
             Alertas de vaga <span>›</span>
           </a>
-          <Link href="/anuncios">
-            Meus anúncios (empresa) <span>›</span>
-          </Link>
-          <Link href="/candidaturas">
-            Candidaturas recebidas (empresa) <span>›</span>
-          </Link>
           <a onClick={irAnunciar}>
             Sou empresa, quero publicar <span>›</span>
           </a>
