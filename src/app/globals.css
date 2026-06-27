@@ -569,6 +569,10 @@ main.appmain {
   flex-direction: column;
   animation: slideUp 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
   overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.sheet.dragging {
+  transition: none;
 }
 @keyframes slideUp {
   from {
@@ -578,18 +582,41 @@ main.appmain {
     transform: none;
   }
 }
-.sheet .bar {
+.sheet-head {
   flex: none;
-  padding: 10px 0 4px;
-  text-align: center;
-  cursor: pointer;
+  position: relative;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  touch-action: none;
+  user-select: none;
+  cursor: grab;
+}
+.sheet-head:active {
+  cursor: grabbing;
 }
 .grip {
+  position: absolute;
+  left: 50%;
+  top: 9px;
+  transform: translateX(-50%);
   width: 40px;
   height: 5px;
   border-radius: 5px;
   background: #d3d0c7;
-  display: inline-block;
+}
+.sheet-back {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+  cursor: pointer;
+  flex: none;
 }
 .sheet-body {
   flex: 1;

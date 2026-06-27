@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from "react";
+import { IconBack } from "./icons";
 import { useApp } from "@/context/app-context";
 import { corLogo } from "@/lib/mock-data";
 
@@ -22,10 +23,54 @@ export function JobSheet() {
 
   const [consentiu, setConsentiu] = useState(false);
 
+  // Arrastar-para-fechar: mexemos no transform direto no DOM (sem re-render).
+  const sheetRef = useRef<HTMLDivElement>(null);
+  const arrastandoRef = useRef(false);
+  const inicioYRef = useRef(0);
+  const desloYRef = useRef(0);
+  const LIMITE_FECHAR = 110;
+
   // Reseta o consentimento ao trocar de vaga.
   useEffect(() => {
     setConsentiu(false);
   }, [vagaAberta]);
+
+  /** Fecha deslizando a sheet para baixo e depois desmonta. */
+  const fecharAnimado = () => {
+    const el = sheetRef.current;
+    if (el) {
+      el.classList.remove("dragging");
+      el.style.transform = "translateY(100%)";
+    }
+    window.setTimeout(fecharSheet, 200);
+  };
+
+  const aoApontarBaixo = (e: ReactPointerEvent<HTMLDivElement>) => {
+    arrastandoRef.current = true;
+    inicioYRef.current = e.clientY;
+    desloYRef.current = 0;
+    sheetRef.current?.classList.add("dragging");
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+  const aoApontarMover = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!arrastandoRef.current) return;
+    const dy = Math.max(0, e.clientY - inicioYRef.current);
+    desloYRef.current = dy;
+    if (sheetRef.current) sheetRef.current.style.transform = `translateY(${dy}px)`;
+  };
+  const aoApontarSoltar = () => {
+    if (!arrastandoRef.current) return;
+    arrastandoRef.current = false;
+    const el = sheetRef.current;
+    if (!el) return;
+    el.classList.remove("dragging");
+    if (desloYRef.current > LIMITE_FECHAR) {
+      fecharAnimado();
+    } else {
+      el.style.transform = ""; // volta ao lugar com transição
+    }
+    desloYRef.current = 0;
+  };
 
   if (vagaAberta == null) return null;
   const vaga = vagas.find((v) => v.id === vagaAberta);
@@ -67,9 +112,30 @@ export function JobSheet() {
 
   return (
     <div className="sheet-wrap open">
-      <div className="scrim" onClick={fecharSheet} />
-      <div className="sheet" role="dialog" aria-modal="true" aria-label={vaga.titulo}>
-        <div className="bar" onClick={fecharSheet}>
+      <div className="scrim" onClick={fecharAnimado} />
+      <div
+        className="sheet"
+        ref={sheetRef}
+        role="dialog"
+        aria-modal="true"
+        aria-label={vaga.titulo}
+      >
+        <div
+          className="sheet-head"
+          onPointerDown={aoApontarBaixo}
+          onPointerMove={aoApontarMover}
+          onPointerUp={aoApontarSoltar}
+          onPointerCancel={aoApontarSoltar}
+        >
+          <button
+            type="button"
+            className="sheet-back"
+            aria-label="Voltar"
+            onClick={fecharAnimado}
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            <IconBack width={18} height={18} />
+          </button>
           <span className="grip" />
         </div>
         <div className="sheet-body">
