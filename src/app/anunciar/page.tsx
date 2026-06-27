@@ -63,8 +63,13 @@ export default function AnunciarPage() {
         return;
       }
       if (data.localidade) setCidade(data.localidade);
-      if (data.bairro) setBairro(data.bairro);
-      mostrarToast("Cidade e bairro preenchidos ✓ Confira.");
+      if (data.bairro) {
+        setBairro(data.bairro);
+        mostrarToast("Cidade e bairro preenchidos ✓ Confira.");
+      } else {
+        // Cidades menores costumam ter só o CEP geral (sem bairro no ViaCEP).
+        mostrarToast("Cidade preenchida ✓ Informe o bairro.");
+      }
     } catch {
       mostrarToast("Não foi possível buscar o CEP agora.");
     } finally {
