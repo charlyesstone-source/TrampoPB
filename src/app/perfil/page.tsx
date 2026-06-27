@@ -48,9 +48,11 @@ export default function PerfilPage() {
         </div>
 
         <div className="menu">
-          <Link href="/curriculo">
-            Meu currículo <span>›</span>
-          </Link>
+          {!empresa.registrada && (
+            <Link href="/curriculo">
+              {reg ? "Alterar meu currículo" : "Meu currículo"} <span>›</span>
+            </Link>
+          )}
           <a onClick={() => mostrarToast("Em construção (próxima fase)")}>
             Alertas de vaga <span>›</span>
           </a>
@@ -63,7 +65,7 @@ export default function PerfilPage() {
           <Link href="/termos">
             Termos de uso <span>›</span>
           </Link>
-          {reg && (
+          {(reg || empresa.registrada) && (
             <a
               onClick={async () => {
                 await sairConta();
