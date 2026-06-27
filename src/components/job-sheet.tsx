@@ -5,20 +5,17 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useApp } from "@/context/app-context";
 import { corLogo } from "@/lib/mock-data";
-import { IconBookmark } from "./icons";
 
-/** Sheet (modal inferior) com o detalhe da vaga e ações de salvar/candidatar. */
+/** Sheet (modal inferior) com o detalhe da vaga e a ação de candidatar. */
 export function JobSheet() {
   const router = useRouter();
   const {
     vagas,
     vagaAberta,
-    salvas,
     candidaturasEnviadas,
     candidato,
     empresa,
     fecharSheet,
-    alternarSalva,
     candidatarVagaAberta,
     mostrarToast,
   } = useApp();
@@ -34,7 +31,6 @@ export function JobSheet() {
   const vaga = vagas.find((v) => v.id === vagaAberta);
   if (!vaga) return null;
 
-  const salva = salvas.has(vaga.id);
   const candidatou = candidaturasEnviadas.has(vaga.id);
 
   const aoCandidatar = async () => {
@@ -58,6 +54,10 @@ export function JobSheet() {
       fecharSheet();
       mostrarToast("Complete seu currículo (WhatsApp) antes de se candidatar");
       router.push("/curriculo");
+    } else if (resultado === "ok") {
+      // Candidatura enviada: fecha o detalhe e volta para o início.
+      fecharSheet();
+      router.push("/");
     }
   };
 
@@ -161,14 +161,6 @@ export function JobSheet() {
         </div>
 
         <div className="sheet-foot">
-          <button
-            className="btn-ghost"
-            aria-pressed={salva}
-            onClick={() => alternarSalva(vaga.id)}
-            aria-label={salva ? "Remover das salvas" : "Salvar vaga"}
-          >
-            <IconBookmark width={22} height={22} filled={salva} />
-          </button>
           <button
             className={`btn btn-primary${candidatou ? " done" : ""}`}
             onClick={aoCandidatar}

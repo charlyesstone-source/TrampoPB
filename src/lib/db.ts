@@ -232,6 +232,55 @@ export async function listarVagasCandidatadas(): Promise<number[]> {
   return (data as { vaga_id: number }[]).map((r) => r.vaga_id);
 }
 
+/** Item de "Minhas vagas": a candidatura do candidato + dados da vaga. */
+export interface MinhaCandidatura {
+  vagaId: number;
+  vagaTitulo: string;
+  empresaNome: string;
+  bairro: string;
+  salario: string;
+  tipo: string;
+  statusCandidatura: StatusCandidatura;
+  quando: string;
+  vagaAtiva: boolean;
+}
+
+/** Candidaturas do candidato logado, com os dados da vaga (RLS filtra as próprias). */
+export async function listarMinhasCandidaturas(): Promise<MinhaCandidatura[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("candidaturas")
+    .select(
+      "vaga_id, status, criado_em, vagas(titulo, empresa_nome, bairro, salario, tipo)"
+    )
+    .order("criado_em", { ascending: false });
+  if (error) throw new Error(error.message);
+
+  type Row = {
+    vaga_id: number;
+    status: StatusCandidatura;
+    criado_em: string;
+    vagas: {
+      titulo: string;
+      empresa_nome: string;
+      bairro: string;
+      salario: string;
+      tipo: string;
+    } | null;
+  };
+  return (data as unknown as Row[]).map((r) => ({
+    vagaId: r.vaga_id,
+    vagaTitulo: r.vagas?.titulo ?? "Vaga encerrada",
+    empresaNome: r.vagas?.empresa_nome ?? "",
+    bairro: r.vagas?.bairro ?? "",
+    salario: r.vagas?.salario ?? "",
+    tipo: r.vagas?.tipo ?? "",
+    statusCandidatura: r.status,
+    quando: formatarHa(r.criado_em),
+    vagaAtiva: !!r.vagas,
+  }));
+}
+
 export async function candidatarDb(
   vagaId: number,
   candidatoId: string,

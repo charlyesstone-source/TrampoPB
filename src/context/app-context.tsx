@@ -5,8 +5,6 @@
  *
  * - Autenticação: Supabase (Fase 2).
  * - Dados (vagas, candidaturas, perfis, pagamentos): REAIS no Supabase, com RLS.
- *
- * "salvas" continua só no cliente (não há tabela para isso na especificação).
  */
 
 import {
@@ -60,7 +58,6 @@ interface AppState {
   carregandoVagas: boolean;
   candidato: Candidato;
   empresa: Empresa;
-  salvas: Set<number>;
   candidaturasEnviadas: Set<number>;
   cobranca: CobrancaPix | null;
   vagaAberta: number | null;
@@ -73,7 +70,6 @@ interface AppState {
   mostrarToast: (msg: string) => void;
   abrirSheet: (id: number) => void;
   fecharSheet: () => void;
-  alternarSalva: (id: number) => void;
   candidatarVagaAberta: () => Promise<ResultadoCandidatura>;
   atualizarCurriculo: (
     dados: Partial<Candidato>,
@@ -95,7 +91,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const [vagas, setVagas] = useState<Vaga[]>([]);
   const [carregandoVagas, setCarregandoVagas] = useState(true);
-  const [salvas, setSalvas] = useState<Set<number>>(new Set());
   const [candidaturasEnviadas, setCandidaturasEnviadas] = useState<Set<number>>(
     new Set()
   );
@@ -243,23 +238,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const abrirSheet = useCallback((id: number) => setVagaAberta(id), []);
   const fecharSheet = useCallback(() => setVagaAberta(null), []);
 
-  const alternarSalva = useCallback(
-    (id: number) => {
-      let salvaAgora = false;
-      setSalvas((prev) => {
-        const next = new Set(prev);
-        if (next.has(id)) next.delete(id);
-        else {
-          next.add(id);
-          salvaAgora = true;
-        }
-        return next;
-      });
-      notificar(salvaAgora ? "Vaga salva" : "Removida das salvas");
-    },
-    [notificar]
-  );
-
   const candidatarVagaAberta = useCallback(async (): Promise<ResultadoCandidatura> => {
     if (vagaAberta == null || !sessao) return "erro";
     const id = vagaAberta;
@@ -338,7 +316,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     carregandoVagas,
     candidato,
     empresa,
-    salvas,
     candidaturasEnviadas,
     cobranca,
     vagaAberta,
@@ -350,7 +327,6 @@ export function AppProvider({ children }: { children: ReactNode }) {
     mostrarToast,
     abrirSheet,
     fecharSheet,
-    alternarSalva,
     candidatarVagaAberta,
     atualizarCurriculo,
     sairConta,

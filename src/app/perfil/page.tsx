@@ -8,7 +8,7 @@ import { iniciais } from "@/lib/mock-data";
 
 export default function PerfilPage() {
   const router = useRouter();
-  const { candidato, empresa, candidaturasEnviadas, salvas, mostrarToast, sairConta } =
+  const { candidato, empresa, candidaturasEnviadas, mostrarToast, sairConta } =
     useApp();
   const reg = candidato.registrado;
 
@@ -40,10 +40,6 @@ export default function PerfilPage() {
           <div className="stat">
             <b>{candidaturasEnviadas.size}</b>
             <span>Candidaturas</span>
-          </div>
-          <div className="stat">
-            <b>{salvas.size}</b>
-            <span>Salvas</span>
           </div>
           <div className="stat">
             <b>{reg ? "87%" : "0%"}</b>

@@ -3,12 +3,10 @@
 import { useApp } from "@/context/app-context";
 import { corLogo } from "@/lib/mock-data";
 import type { Vaga } from "@/lib/types";
-import { IconBookmark } from "./icons";
 
-/** Card de vaga do feed/busca/salvas. Abre o sheet de detalhe ao tocar. */
+/** Card de vaga do feed/busca. Abre o sheet de detalhe ao tocar. */
 export function VagaCard({ vaga }: { vaga: Vaga }) {
-  const { salvas, candidaturasEnviadas, abrirSheet, alternarSalva } = useApp();
-  const salva = salvas.has(vaga.id);
+  const { candidaturasEnviadas, abrirSheet } = useApp();
   const candidatou = candidaturasEnviadas.has(vaga.id);
 
   return (
@@ -25,18 +23,6 @@ export function VagaCard({ vaga }: { vaga: Vaga }) {
       }}
       aria-label={`Ver vaga: ${vaga.titulo} na ${vaga.empresa}`}
     >
-      <button
-        type="button"
-        className="save"
-        aria-pressed={salva}
-        aria-label={salva ? "Remover das salvas" : "Salvar vaga"}
-        onClick={(e) => {
-          e.stopPropagation();
-          alternarSalva(vaga.id);
-        }}
-      >
-        <IconBookmark width={20} height={20} filled={salva} />
-      </button>
       <div className="top">
         <div className="logo" style={{ background: corLogo(vaga.id) }}>
           {vaga.empresa[0]}

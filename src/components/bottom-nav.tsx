@@ -4,8 +4,8 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useApp } from "@/context/app-context";
 import {
-  IconBookmark,
   IconBriefcase,
+  IconClipboardCheck,
   IconHome,
   IconPlus,
   IconUser,
@@ -20,7 +20,7 @@ export function BottomNav() {
   /** Rotas que mantêm uma aba acesa mesmo sem serem a aba em si. */
   const aba = (() => {
     if (pathname === "/") return "inicio";
-    if (pathname.startsWith("/salvas")) return "salvas";
+    if (pathname.startsWith("/minhas-vagas")) return "minhasvagas";
     if (
       pathname.startsWith("/empresa") ||
       pathname.startsWith("/anuncios") ||
@@ -70,12 +70,12 @@ export function BottomNav() {
         <span className="fab-label">Anunciar vaga</span>
       </div>
       <Link
-        href="/salvas"
-        className={`nav-btn${aba === "salvas" ? " active" : ""}`}
-        aria-current={aba === "salvas" ? "page" : undefined}
+        href="/minhas-vagas"
+        className={`nav-btn${aba === "minhasvagas" ? " active" : ""}`}
+        aria-current={aba === "minhasvagas" ? "page" : undefined}
       >
-        <IconBookmark />
-        Salvas
+        <IconClipboardCheck />
+        Minhas vagas
       </Link>
       <Link
         href="/perfil"

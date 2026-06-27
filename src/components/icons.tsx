@@ -45,6 +45,16 @@ export function IconUser(p: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function IconClipboardCheck(p: SVGProps<SVGSVGElement>) {
+  return (
+    <svg {...base} strokeWidth={2} {...p}>
+      <rect x="6" y="4" width="12" height="17" rx="2" />
+      <path d="M9 4V3a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+      <path d="m9 13 2 2 4-4" />
+    </svg>
+  );
+}
+
 export function IconBriefcase(p: SVGProps<SVGSVGElement>) {
   return (
     <svg {...base} strokeWidth={2} {...p}>
