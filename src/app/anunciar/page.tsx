@@ -31,6 +31,7 @@ export default function AnunciarPage() {
   const [tipo, setTipo] = useState<string>(TIPOS_CONTRATO[0]);
   const [tipoOutro, setTipoOutro] = useState("");
   const [buscandoCep, setBuscandoCep] = useState(false);
+  const [salarioACombinar, setSalarioACombinar] = useState(false);
 
   const formatarCep = (v: string) => {
     const d = v.replace(/\D/g, "").slice(0, 8);
@@ -100,7 +101,7 @@ export default function AnunciarPage() {
           empresa: txt("empresa"),
           cidade: cidade.trim(),
           bairro: bairro.trim(),
-          salario: txt("salario"),
+          salario: salarioACombinar ? "A combinar" : txt("salario"),
           tipo: tipoFinal,
           categoria: txt("categoria"),
           descricao: txt("descricao"),
@@ -304,9 +305,18 @@ export default function AnunciarPage() {
               className="in"
               id="salario"
               name="salario"
-              placeholder="Ex.: 1.600"
+              placeholder={salarioACombinar ? "A combinar" : "Ex.: 1.600"}
               inputMode="numeric"
+              disabled={salarioACombinar}
             />
+            <label className="check-inline">
+              <input
+                type="checkbox"
+                checked={salarioACombinar}
+                onChange={(e) => setSalarioACombinar(e.target.checked)}
+              />
+              A combinar (sem valor fixo)
+            </label>
           </div>
           <div className="field">
             <label htmlFor="descricao">Descrição da vaga</label>

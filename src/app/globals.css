@@ -1007,6 +1007,20 @@ textarea.in {
   color: var(--muted);
   margin: 2px 2px 10px;
 }
+.check-inline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 9px;
+  font-size: 13px;
+  color: var(--ink);
+  cursor: pointer;
+}
+.check-inline input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--brand);
+}
 .paginacao {
   display: flex;
   align-items: center;

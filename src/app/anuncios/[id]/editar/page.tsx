@@ -24,6 +24,7 @@ export default function EditarAnuncioPage() {
   const [tipo, setTipo] = useState<string>(TIPOS_CONTRATO[0]);
   const [tipoOutro, setTipoOutro] = useState("");
   const [buscandoCep, setBuscandoCep] = useState(false);
+  const [salarioACombinar, setSalarioACombinar] = useState(false);
 
   // Porta de entrada: exige conta de empresa.
   useEffect(() => {
@@ -43,6 +44,7 @@ export default function EditarAnuncioPage() {
         setVaga(v);
         setCidade(v.cidade);
         setBairro(v.bairro);
+        setSalarioACombinar(v.salario === "A combinar");
         if ((TIPOS_CONTRATO as string[]).includes(v.tipo)) {
           setTipo(v.tipo);
         } else {
@@ -113,7 +115,7 @@ export default function EditarAnuncioPage() {
         empresaNome: txt("empresa"),
         cidade: cidade.trim(),
         bairro: bairro.trim(),
-        salario: txt("salario"),
+        salario: salarioACombinar ? "A combinar" : txt("salario"),
         tipo: tipoFinal,
         categoria: txt("categoria"),
         descricao: txt("descricao"),
@@ -260,10 +262,19 @@ export default function EditarAnuncioPage() {
                 className="in"
                 id="salario"
                 name="salario"
-                placeholder="Ex.: 1.600"
+                placeholder={salarioACombinar ? "A combinar" : "Ex.: 1.600"}
                 inputMode="numeric"
+                disabled={salarioACombinar}
                 defaultValue={vaga.salario === "A combinar" ? "" : vaga.salario}
               />
+              <label className="check-inline">
+                <input
+                  type="checkbox"
+                  checked={salarioACombinar}
+                  onChange={(e) => setSalarioACombinar(e.target.checked)}
+                />
+                A combinar (sem valor fixo)
+              </label>
             </div>
             <div className="field">
               <label htmlFor="descricao">Descrição da vaga</label>
