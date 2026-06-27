@@ -56,21 +56,26 @@ export async function POST(req: Request) {
   const admin = createAdminClient();
   const { data: vaga } = await admin
     .from("vagas")
-    .select("titulo, empresa_id, empresa_nome")
+    .select("titulo, empresa_id, empresa_nome, email_contato")
     .eq("id", vagaId)
     .maybeSingle();
   if (!vaga) {
     return Response.json({ erro: "vaga não encontrada" }, { status: 404 });
   }
 
-  const { data: empresa } = await admin
-    .from("empresas")
-    .select("email")
-    .eq("id", vaga.empresa_id)
-    .maybeSingle();
-  const destino = empresa?.email?.trim();
+  // Destino: o "E-mail de cadastro" informado na vaga. Se estiver vazio, cai
+  // para o e-mail da conta da empresa (para o aviso não se perder).
+  let destino = vaga.email_contato?.trim();
   if (!destino) {
-    return Response.json({ enviado: false, motivo: "empresa-sem-email" });
+    const { data: empresa } = await admin
+      .from("empresas")
+      .select("email")
+      .eq("id", vaga.empresa_id)
+      .maybeSingle();
+    destino = empresa?.email?.trim();
+  }
+  if (!destino) {
+    return Response.json({ enviado: false, motivo: "sem-email-destino" });
   }
 
   // 4) Monta e envia o aviso.
