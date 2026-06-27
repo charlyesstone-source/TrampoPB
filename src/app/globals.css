@@ -1463,7 +1463,8 @@ nav.bottomnav {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 9px 6px calc(9px + env(safe-area-inset-bottom));
+  gap: 2px;
+  padding: 9px 8px calc(9px + env(safe-area-inset-bottom));
   position: relative;
   z-index: 6;
 }
@@ -1476,10 +1477,12 @@ nav.bottomnav {
   align-items: center;
   gap: 3px;
   font: inherit;
-  font-size: 10.5px;
+  font-size: 10px;
   font-weight: 600;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
   color: #9aa7a2;
-  padding: 4px 8px;
+  padding: 4px 4px;
   flex: 1;
   transition: 0.15s;
   text-decoration: none;
@@ -1492,33 +1495,35 @@ nav.bottomnav {
   height: 23px;
 }
 .fab {
-  width: 50px;
-  height: 50px;
-  border-radius: 16px;
+  width: 46px;
+  height: 46px;
+  border-radius: 15px;
   background: var(--ink);
   color: #fff;
   display: grid;
   place-items: center;
-  margin-top: -22px;
+  margin-top: -20px;
   box-shadow: var(--shadow);
   border: 3px solid var(--surface);
   cursor: pointer;
 }
 .fab svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
 }
 .nav-fab {
   display: flex;
   flex-direction: column;
   align-items: center;
   flex: 1;
+  padding: 0 4px;
 }
 .fab-label {
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: -0.2px;
   color: var(--ink);
-  margin-top: 3px;
+  margin-top: 5px;
   white-space: nowrap;
 }
 
