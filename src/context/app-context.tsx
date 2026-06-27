@@ -263,6 +263,13 @@ export function AppProvider({ children }: { children: ReactNode }) {
         experiencia: cv.experiencia ?? "",
       });
       setCandidaturasEnviadas((prev) => new Set(prev).add(id));
+      // Avisa a empresa por e-mail (best-effort: não trava nem reverte a
+      // candidatura se o aviso falhar; a candidatura já está gravada).
+      void fetch("/api/notificar-candidatura", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vagaId: id }),
+      }).catch(() => {});
       notificar(
         `Candidatura enviada ✓ ${vaga ? vaga.empresa + " foi avisada." : ""}`.trim()
       );
