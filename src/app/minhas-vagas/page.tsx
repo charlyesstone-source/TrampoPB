@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useApp } from "@/context/app-context";
 import { listarMinhasCandidaturas, type MinhaCandidatura } from "@/lib/db";
@@ -13,6 +14,7 @@ const STATUS_LABEL: Record<StatusCandidatura, string> = {
 };
 
 export default function MinhasVagasPage() {
+  const router = useRouter();
   const { candidato, empresa, carregandoSessao, abrirSheet, mostrarToast } = useApp();
   const [lista, setLista] = useState<MinhaCandidatura[]>([]);
   const [carregando, setCarregando] = useState(true);
@@ -49,17 +51,20 @@ export default function MinhasVagasPage() {
           </div>
         ) : !candidato.registrado ? (
           <>
-            <div className="empty">
-              <b>Entre para ver suas candidaturas.</b>
-              Inscreva-se como candidato e candidate-se às vagas — elas aparecem aqui.
-            </div>
-            <Link
-              href="/curriculo"
+            <p className="demo-note" style={{ textAlign: "left", margin: "16px 0 0" }}>
+              Aqui ficam as vagas a que você se candidatou. Inscreva-se como candidato e
+              candidate-se às vagas — elas aparecem aqui.
+            </p>
+            <button
+              type="button"
               className="submit"
-              style={{ display: "block", textAlign: "center", textDecoration: "none" }}
+              onClick={() => router.push("/curriculo")}
             >
               Inscrever-se
-            </Link>
+            </button>
+            <div className="form-alt">
+              Já tem conta? <Link href="/entrar">Entrar</Link>
+            </div>
           </>
         ) : lista.length === 0 ? (
           <div className="empty">
