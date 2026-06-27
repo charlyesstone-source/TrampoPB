@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
+import { SubHead } from "@/components/sub-head";
 import { useApp } from "@/context/app-context";
 import {
   COBRANCA_ATIVA,
@@ -144,10 +145,11 @@ export default function AnunciarPage() {
   return (
     <section className="view">
       <div className="pad">
-        <div className="greet" style={{ marginTop: 10 }}>
-          Anunciar vaga
-          <small>Para empresas de João Pessoa e região.</small>
-        </div>
+        <SubHead
+          titulo="Anunciar vaga"
+          sub="Para empresas de João Pessoa e região."
+          voltarPara="/empresa"
+        />
 
         <div className="biz-bar">
           Anunciando como <b>{empresa.nome}</b> ·{" "}

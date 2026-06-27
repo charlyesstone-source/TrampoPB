@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CategoryChips } from "@/components/category-chips";
 import { IconSearch } from "@/components/icons";
+import { SubHead } from "@/components/sub-head";
 import { ListaVagas } from "@/components/vaga-card";
 import { useApp } from "@/context/app-context";
 
@@ -21,9 +22,7 @@ export default function BuscarPage() {
   return (
     <section className="view">
       <div className="pad">
-        <div className="greet" style={{ marginTop: 10 }}>
-          Buscar vagas
-        </div>
+        <SubHead titulo="Buscar vagas" sub="Cargo, empresa ou bairro." voltarPara="/" />
         <div className="search" style={{ marginTop: 12 }}>
           <IconSearch width={18} height={18} stroke="#9aa7a2" />
           <input

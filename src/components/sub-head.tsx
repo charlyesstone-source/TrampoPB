@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { IconBack } from "./icons";
 
-/** Cabeçalho de sub-tela com botão "voltar". */
+/** Cabeçalho de sub-tela com botão "voltar" (volta sempre para a tela anterior). */
 export function SubHead({
   titulo,
   sub,
@@ -11,18 +11,24 @@ export function SubHead({
 }: {
   titulo: string;
   sub?: string;
-  /** Rota de destino do botão voltar; se omitido, usa o histórico. */
+  /** Destino de reserva quando não há tela anterior (ex.: link aberto direto). */
   voltarPara?: string;
 }) {
   const router = useRouter();
+
+  const voltar = () => {
+    // Sempre volta para a tela anterior; só usa o destino de reserva quando
+    // não há histórico (ex.: a pessoa abriu o link direto nessa tela).
+    if (typeof window !== "undefined" && window.history.length > 1) {
+      router.back();
+    } else {
+      router.push(voltarPara ?? "/");
+    }
+  };
+
   return (
     <div className="subhead">
-      <button
-        type="button"
-        className="back"
-        aria-label="Voltar"
-        onClick={() => (voltarPara ? router.push(voltarPara) : router.back())}
-      >
+      <button type="button" className="back" aria-label="Voltar" onClick={voltar}>
         <IconBack width={18} height={18} />
       </button>
       <div>
