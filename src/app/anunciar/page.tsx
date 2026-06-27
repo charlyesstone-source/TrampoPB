@@ -23,19 +23,6 @@ export default function AnunciarPage() {
   } = useApp();
   const [publicando, setPublicando] = useState(false);
 
-  // Importação assistida (link ou texto do OLX) → pré-preenche o formulário.
-  const [entrada, setEntrada] = useState("");
-  const [importando, setImportando] = useState(false);
-  const [preench, setPreench] = useState({
-    titulo: "",
-    empresa: "",
-    categoria: "",
-    salario: "",
-    descricao: "",
-    requisitos: "",
-  });
-  const [formKey, setFormKey] = useState(0);
-
   // Localização: o CEP preenche cidade e bairro automaticamente (ViaCEP).
   // Tipo de contrato é controlado para revelar o campo "Outro".
   const [cep, setCep] = useState("");
@@ -74,55 +61,6 @@ export default function AnunciarPage() {
       mostrarToast("Não foi possível buscar o CEP agora.");
     } finally {
       setBuscandoCep(false);
-    }
-  };
-
-  const importar = async () => {
-    const v = entrada.trim();
-    if (!v) {
-      mostrarToast("Cole o link ou o texto da vaga.");
-      return;
-    }
-    const ehUrl = /^https?:\/\/\S+$/i.test(v) && !v.includes("\n") && v.length < 400;
-    setImportando(true);
-    try {
-      const res = await fetch("/api/importar-olx", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(ehUrl ? { url: v } : { texto: v }),
-      });
-      const data = await res.json();
-      if (data.ok && data.vaga) {
-        const vg = data.vaga;
-        setPreench((p) => ({
-          ...p,
-          titulo: vg.titulo || p.titulo,
-          categoria: vg.categoria || p.categoria,
-          salario: vg.salario || p.salario,
-          descricao: vg.descricao || p.descricao,
-        }));
-        if (vg.bairro) setBairro(vg.bairro);
-        if (vg.tipo) {
-          if ((TIPOS_CONTRATO as string[]).includes(vg.tipo)) {
-            setTipo(vg.tipo);
-          } else {
-            setTipo("Outro");
-            setTipoOutro(vg.tipo);
-          }
-        }
-        setFormKey((k) => k + 1);
-        mostrarToast("Campos preenchidos ✓ Revise antes de publicar.");
-      } else if (data.bloqueado) {
-        mostrarToast(
-          "O OLX bloqueou a leitura do link. Cole aqui o TEXTO da vaga."
-        );
-      } else {
-        mostrarToast(data.erro ?? "Não foi possível importar.");
-      }
-    } catch {
-      mostrarToast("Não foi possível importar.");
-    } finally {
-      setImportando(false);
     }
   };
 
@@ -253,31 +191,7 @@ export default function AnunciarPage() {
           </ul>
         </div>
 
-        <div className="import-box">
-          <b>Já tem essa vaga no OLX?</b>
-          <span>
-            Cole o <b>link</b> da sua vaga. Se o OLX bloquear a leitura, cole o{" "}
-            <b>texto completo</b> da vaga aqui — a gente preenche o formulário pra você
-            revisar.
-          </span>
-          <textarea
-            className="in"
-            value={entrada}
-            onChange={(e) => setEntrada(e.target.value)}
-            placeholder={"Cole o link da vaga do OLX\nou o texto completo da vaga…"}
-            rows={3}
-          />
-          <button
-            type="button"
-            className="btn-mini primary"
-            onClick={importar}
-            disabled={importando}
-          >
-            {importando ? "Importando…" : "Preencher automaticamente"}
-          </button>
-        </div>
-
-        <form key={formKey} onSubmit={aoPublicar}>
+        <form onSubmit={aoPublicar}>
           <div className="field">
             <label htmlFor="titulo">Cargo</label>
             <input
@@ -286,7 +200,6 @@ export default function AnunciarPage() {
               name="titulo"
               required
               placeholder="Ex.: Auxiliar de atendimento"
-              defaultValue={preench.titulo}
             />
           </div>
           <div className="field">
@@ -297,7 +210,7 @@ export default function AnunciarPage() {
               name="empresa"
               required
               placeholder="Nome da sua empresa"
-              defaultValue={preench.empresa || empresa.nome}
+              defaultValue={empresa.nome}
             />
           </div>
           <div className="field">
@@ -364,7 +277,7 @@ export default function AnunciarPage() {
                 className="in"
                 id="categoria"
                 name="categoria"
-                defaultValue={preench.categoria || CATEGORIAS[0]}
+                defaultValue={CATEGORIAS[0]}
               >
                 {CATEGORIAS.map((c) => (
                   <option key={c}>{c}</option>
@@ -393,7 +306,6 @@ export default function AnunciarPage() {
               name="salario"
               placeholder="Ex.: 1.600"
               inputMode="numeric"
-              defaultValue={preench.salario}
             />
           </div>
           <div className="field">
@@ -404,7 +316,6 @@ export default function AnunciarPage() {
               name="descricao"
               required
               placeholder="Conte o dia a dia da função, jornada e o que esperar."
-              defaultValue={preench.descricao}
             />
           </div>
           <div className="field">
@@ -416,7 +327,6 @@ export default function AnunciarPage() {
               placeholder={
                 "Ensino médio completo\nExperiência com atendimento\nDisponibilidade aos sábados"
               }
-              defaultValue={preench.requisitos}
             />
           </div>
           <div className="row2">
