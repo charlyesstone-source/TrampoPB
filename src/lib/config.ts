@@ -10,6 +10,9 @@ export const PRECO_VAGA_CENTAVOS = 3990;
 /** Dias que uma vaga fica no ar antes de expirar. */
 export const VALIDADE_DIAS = 15;
 
+/** Quantas vagas aparecem por página no feed (paginação). */
+export const VAGAS_POR_PAGINA = 7;
+
 /**
  * Cobrança ligada? No período de lançamento fica `false` — as vagas são
  * publicadas de graça (sem Pix). Quando for ligar a cobrança de R$ 39,90,

@@ -1007,6 +1007,34 @@ textarea.in {
   color: var(--muted);
   margin: 2px 2px 10px;
 }
+.paginacao {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 18px 0 6px;
+}
+.pag-btn {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  border-radius: 11px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.pag-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.pag-info {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  min-width: 96px;
+  text-align: center;
+}
 
 /* Tela de pagamento Pix ----------------------------------------*/
 .pay-summary {

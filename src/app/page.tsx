@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { CategoryChips } from "@/components/category-chips";
 import { IconChevronRight, IconRefresh, IconSearch } from "@/components/icons";
 import { PromoCarousel } from "@/components/promo-carousel";
 import { ListaVagas } from "@/components/vaga-card";
 import { useApp } from "@/context/app-context";
+import { VAGAS_POR_PAGINA } from "@/lib/config";
 import { useSaudacao } from "@/lib/use-saudacao";
 
 export default function InicioPage() {
@@ -14,6 +15,8 @@ export default function InicioPage() {
   const saudacao = useSaudacao();
   const [cat, setCat] = useState("Todas");
   const [atualizando, setAtualizando] = useState(false);
+  const [pagina, setPagina] = useState(1);
+  const listaTopoRef = useRef<HTMLDivElement>(null);
 
   const atualizar = async () => {
     setAtualizando(true);
@@ -22,6 +25,24 @@ export default function InicioPage() {
   };
 
   const filtradas = vagas.filter((v) => cat === "Todas" || v.categoria === cat);
+  const totalPaginas = Math.max(1, Math.ceil(filtradas.length / VAGAS_POR_PAGINA));
+  const paginaAtual = Math.min(pagina, totalPaginas);
+  const visiveis = filtradas.slice(
+    (paginaAtual - 1) * VAGAS_POR_PAGINA,
+    paginaAtual * VAGAS_POR_PAGINA
+  );
+
+  // Trocar de categoria volta para a primeira página.
+  const trocarCategoria = (c: string) => {
+    setCat(c);
+    setPagina(1);
+  };
+
+  // Trocar de página rola de volta para o topo da lista.
+  const trocarPagina = (p: number) => {
+    setPagina(p);
+    listaTopoRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   return (
     <section className="view">
@@ -63,10 +84,10 @@ export default function InicioPage() {
         <PromoCarousel />
       </div>
 
-      <CategoryChips ativa={cat} onChange={setCat} />
+      <CategoryChips ativa={cat} onChange={trocarCategoria} />
 
       <div className="pad">
-        <div className="sectitle">
+        <div className="sectitle" ref={listaTopoRef}>
           Vagas perto de você
           <span className="sec-right">
             <em>{carregandoVagas ? "…" : `${filtradas.length} vagas`}</em>
@@ -86,11 +107,36 @@ export default function InicioPage() {
             <b>Carregando vagas…</b>
           </div>
         ) : (
-          <ListaVagas
-            vagas={filtradas}
-            vazioTitulo="Nenhuma vaga publicada ainda."
-            vazioSub="As vagas aparecem aqui assim que as empresas publicarem."
-          />
+          <>
+            <ListaVagas
+              vagas={visiveis}
+              vazioTitulo="Nenhuma vaga publicada ainda."
+              vazioSub="As vagas aparecem aqui assim que as empresas publicarem."
+            />
+            {totalPaginas > 1 && (
+              <div className="paginacao">
+                <button
+                  type="button"
+                  className="pag-btn"
+                  onClick={() => trocarPagina(paginaAtual - 1)}
+                  disabled={paginaAtual <= 1}
+                >
+                  ‹ Anterior
+                </button>
+                <span className="pag-info">
+                  Página {paginaAtual} de {totalPaginas}
+                </span>
+                <button
+                  type="button"
+                  className="pag-btn"
+                  onClick={() => trocarPagina(paginaAtual + 1)}
+                  disabled={paginaAtual >= totalPaginas}
+                >
+                  Próxima ›
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </section>
