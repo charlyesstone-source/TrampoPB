@@ -292,7 +292,7 @@ export default function EditarAnuncioPage() {
             </div>
             <div className="row2">
               <div className="field">
-                <label htmlFor="email">E-mail para contato</label>
+                <label htmlFor="email">E-mail de cadastro</label>
                 <input
                   className="in"
                   id="email"
@@ -314,6 +314,9 @@ export default function EditarAnuncioPage() {
                 />
               </div>
             </div>
+            <p className="campo-privado">
+              🔒 Os candidatos não veem seu e-mail nem seu WhatsApp.
+            </p>
             <button className="submit" type="submit" disabled={salvando}>
               {salvando ? "Salvando…" : "Salvar alterações"}
             </button>

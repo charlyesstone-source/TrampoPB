@@ -1002,6 +1002,11 @@ textarea.in {
   color: var(--muted);
   margin-top: 5px;
 }
+.campo-privado {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 2px 2px 10px;
+}
 
 /* Tela de pagamento Pix ----------------------------------------*/
 .pay-summary {
