@@ -15,7 +15,7 @@ import {
 export function BottomNav() {
   const pathname = usePathname();
   const router = useRouter();
-  const { empresa } = useApp();
+  const { empresa, candidaturasNovas } = useApp();
 
   /** Rotas que mantêm uma aba acesa mesmo sem serem a aba em si. */
   const aba = (() => {
@@ -56,7 +56,17 @@ export function BottomNav() {
         className={`nav-btn${aba === "empresa" ? " active" : ""}`}
         aria-current={aba === "empresa" ? "page" : undefined}
       >
-        <IconBriefcase />
+        <span className="nav-ico">
+          <IconBriefcase />
+          {candidaturasNovas > 0 && (
+            <span
+              className="nav-badge"
+              aria-label={`${candidaturasNovas} candidatura(s) nova(s)`}
+            >
+              {candidaturasNovas > 9 ? "9+" : candidaturasNovas}
+            </span>
+          )}
+        </span>
         Empresa
       </Link>
       <div className="nav-fab">

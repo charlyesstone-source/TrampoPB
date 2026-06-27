@@ -20,6 +20,7 @@ import { perfilDoUsuario, sair, type PerfilSessao } from "@/lib/auth";
 import {
   atualizarCandidatoDb,
   candidatarDb,
+  contarCandidaturasNovas,
   getCandidato,
   listarVagasAtivas,
   listarVagasCandidatadas,
@@ -62,6 +63,7 @@ interface AppState {
   cobranca: CobrancaPix | null;
   vagaAberta: number | null;
   totalContratados: number;
+  candidaturasNovas: number;
   toastMsg: string | null;
   toastSeq: number;
   carregandoSessao: boolean;
@@ -78,6 +80,7 @@ interface AppState {
   sairConta: () => Promise<void>;
   definirCobranca: (c: CobrancaPix | null) => void;
   recarregarVagas: (opcoes?: { silencioso?: boolean }) => Promise<void>;
+  marcarCandidaturasVistas: () => void;
 }
 
 const AppCtx = createContext<AppState | null>(null);
@@ -99,6 +102,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [vagaAberta, setVagaAberta] = useState<number | null>(null);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const [toastSeq, setToastSeq] = useState(0);
+  const [candidaturasNovas, setCandidaturasNovas] = useState(0);
 
   const notificar = useCallback((msg: string) => {
     setToastMsg(msg);
@@ -233,6 +237,56 @@ export function AppProvider({ children }: { children: ReactNode }) {
     };
   }, [sessao]);
 
+  // --- Badge de candidaturas novas (visão empresa) --------------------------
+  // Conta as candidaturas chegadas depois da última vez que a empresa abriu o
+  // painel (marcador em localStorage por empresa). Zera ao visitar /candidaturas.
+  const recarregarCandidaturasNovas = useCallback(async () => {
+    if (!supabase || sessao?.papel !== "empresa") {
+      setCandidaturasNovas(0);
+      return;
+    }
+    try {
+      const desde =
+        typeof window !== "undefined"
+          ? window.localStorage.getItem(`trampopb:cand-vistas:${sessao.id}`)
+          : null;
+      setCandidaturasNovas(await contarCandidaturasNovas(desde));
+    } catch {
+      /* silencioso: o badge só não atualiza */
+    }
+  }, [supabase, sessao]);
+
+  const marcarCandidaturasVistas = useCallback(() => {
+    if (sessao?.papel !== "empresa") return;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem(
+        `trampopb:cand-vistas:${sessao.id}`,
+        new Date().toISOString()
+      );
+    }
+    setCandidaturasNovas(0);
+  }, [sessao]);
+
+  // Carrega ao logar/trocar de sessão e quando o usuário volta pro app/aba.
+  useEffect(() => {
+    void recarregarCandidaturasNovas();
+  }, [recarregarCandidaturasNovas]);
+
+  useEffect(() => {
+    if (!supabase) return;
+    const aoVoltar = () => {
+      if (document.visibilityState === "visible") {
+        void recarregarCandidaturasNovas();
+      }
+    };
+    window.addEventListener("focus", aoVoltar);
+    document.addEventListener("visibilitychange", aoVoltar);
+    return () => {
+      window.removeEventListener("focus", aoVoltar);
+      document.removeEventListener("visibilitychange", aoVoltar);
+    };
+  }, [supabase, recarregarCandidaturasNovas]);
+
   // --- Ações ----------------------------------------------------------------
   const mostrarToast = notificar;
   const abrirSheet = useCallback((id: number) => setVagaAberta(id), []);
@@ -327,6 +381,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     cobranca,
     vagaAberta,
     totalContratados,
+    candidaturasNovas,
     toastMsg,
     toastSeq,
     carregandoSessao,
@@ -339,6 +394,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     sairConta,
     definirCobranca,
     recarregarVagas,
+    marcarCandidaturasVistas,
   };
 
   return <AppCtx.Provider value={value}>{children}</AppCtx.Provider>;

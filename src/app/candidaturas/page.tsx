@@ -22,7 +22,14 @@ const CICLO: StatusCandidatura[] = ["novo", "analise", "contratado"];
 
 export default function CandidaturasPage() {
   const router = useRouter();
-  const { empresa, candidato, carregandoSessao, sairConta, mostrarToast } = useApp();
+  const {
+    empresa,
+    candidato,
+    carregandoSessao,
+    sairConta,
+    mostrarToast,
+    marcarCandidaturasVistas,
+  } = useApp();
   const [lista, setLista] = useState<CandidaturaPainel[]>([]);
   const [carregando, setCarregando] = useState(true);
 
@@ -35,8 +42,11 @@ export default function CandidaturasPage() {
     listarCandidaturasDaEmpresa()
       .then(setLista)
       .catch(() => mostrarToast("Não foi possível carregar as candidaturas."))
-      .finally(() => setCarregando(false));
-  }, [empresa.registrada, carregandoSessao, mostrarToast]);
+      .finally(() => {
+        setCarregando(false);
+        marcarCandidaturasVistas(); // abriu o painel → zera o badge
+      });
+  }, [empresa.registrada, carregandoSessao, mostrarToast, marcarCandidaturasVistas]);
 
   // Não é anunciante: candidato logado ou visitante.
   if (!carregandoSessao && !empresa.registrada) {

@@ -395,6 +395,24 @@ function candidaturaPainelDeRow(r: CandidaturaRow): CandidaturaPainel {
   };
 }
 
+/**
+ * Quantas candidaturas das vagas da empresa logada chegaram DEPOIS de `desdeISO`
+ * (ou o total, se `desdeISO` for null). Alimenta o "badge" de novidades na aba
+ * Empresa. A RLS já restringe às candidaturas das vagas da própria empresa.
+ */
+export async function contarCandidaturasNovas(
+  desdeISO: string | null
+): Promise<number> {
+  const supabase = createClient();
+  let q = supabase
+    .from("candidaturas")
+    .select("id", { count: "exact", head: true });
+  if (desdeISO) q = q.gt("criado_em", desdeISO);
+  const { count, error } = await q;
+  if (error) throw new Error(error.message);
+  return count ?? 0;
+}
+
 /** Candidaturas das vagas da empresa logada (visão painel). */
 export async function listarCandidaturasDaEmpresa(): Promise<CandidaturaPainel[]> {
   const supabase = createClient();
