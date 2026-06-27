@@ -16,6 +16,7 @@ export function JobSheet() {
     salvas,
     candidaturasEnviadas,
     candidato,
+    empresa,
     fecharSheet,
     alternarSalva,
     candidatarVagaAberta,
@@ -37,6 +38,13 @@ export function JobSheet() {
   const candidatou = candidaturasEnviadas.has(vaga.id);
 
   const aoCandidatar = async () => {
+    // Conta de empresa não pode se candidatar.
+    if (empresa.registrada) {
+      mostrarToast(
+        "Você está com uma conta de empresa. Entre como candidato para se candidatar."
+      );
+      return;
+    }
     // Visitante: leva à inscrição.
     if (!candidato.registrado) {
       fecharSheet();
