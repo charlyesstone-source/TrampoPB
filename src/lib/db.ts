@@ -400,17 +400,41 @@ function candidaturaPainelDeRow(r: CandidaturaRow): CandidaturaPainel {
  * (ou o total, se `desdeISO` for null). Alimenta o "badge" de novidades na aba
  * Empresa. A RLS já restringe às candidaturas das vagas da própria empresa.
  */
-export async function contarCandidaturasNovas(
-  desdeISO: string | null
-): Promise<number> {
+export async function contarCandidaturasNovas(): Promise<number> {
   const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return 0;
+  // Carimbo "visto" da própria empresa (sincroniza entre dispositivos).
+  const { data: emp } = await supabase
+    .from("empresas")
+    .select("candidaturas_vistas_em")
+    .eq("id", user.id)
+    .maybeSingle();
+  const desde = (emp as { candidaturas_vistas_em?: string | null } | null)
+    ?.candidaturas_vistas_em;
   let q = supabase
     .from("candidaturas")
     .select("id", { count: "exact", head: true });
-  if (desdeISO) q = q.gt("criado_em", desdeISO);
+  if (desde) q = q.gt("criado_em", desde);
   const { count, error } = await q;
   if (error) throw new Error(error.message);
   return count ?? 0;
+}
+
+/** Marca as candidaturas atuais como vistas (carimbo na empresa logada). */
+export async function marcarCandidaturasVistasDb(): Promise<void> {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return;
+  const { error } = await supabase
+    .from("empresas")
+    .update({ candidaturas_vistas_em: new Date().toISOString() })
+    .eq("id", user.id);
+  if (error) throw new Error(error.message);
 }
 
 /** Candidaturas das vagas da empresa logada (visão painel). */

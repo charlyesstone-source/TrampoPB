@@ -24,6 +24,7 @@ import {
   getCandidato,
   listarVagasAtivas,
   listarVagasCandidatadas,
+  marcarCandidaturasVistasDb,
   totalContratados as totalContratadosDb,
 } from "@/lib/db";
 import { createClient } from "@/lib/supabase/client";
@@ -239,18 +240,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   // --- Badge de candidaturas novas (visão empresa) --------------------------
   // Conta as candidaturas chegadas depois da última vez que a empresa abriu o
-  // painel (marcador em localStorage por empresa). Zera ao visitar /candidaturas.
+  // painel (carimbo no banco — sincroniza entre dispositivos). Zera ao visitar
+  // /candidaturas.
   const recarregarCandidaturasNovas = useCallback(async () => {
     if (!supabase || sessao?.papel !== "empresa") {
       setCandidaturasNovas(0);
       return;
     }
     try {
-      const desde =
-        typeof window !== "undefined"
-          ? window.localStorage.getItem(`trampopb:cand-vistas:${sessao.id}`)
-          : null;
-      setCandidaturasNovas(await contarCandidaturasNovas(desde));
+      setCandidaturasNovas(await contarCandidaturasNovas());
     } catch {
       /* silencioso: o badge só não atualiza */
     }
@@ -258,13 +256,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const marcarCandidaturasVistas = useCallback(() => {
     if (sessao?.papel !== "empresa") return;
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(
-        `trampopb:cand-vistas:${sessao.id}`,
-        new Date().toISOString()
-      );
-    }
-    setCandidaturasNovas(0);
+    setCandidaturasNovas(0); // otimista; o carimbo no banco confirma
+    void marcarCandidaturasVistasDb().catch(() => {});
   }, [sessao]);
 
   // Carrega ao logar/trocar de sessão e quando o usuário volta pro app/aba.
