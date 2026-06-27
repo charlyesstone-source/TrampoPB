@@ -33,7 +33,9 @@ export function VagaCard({ vaga }: { vaga: Vaga }) {
         </div>
       </div>
       <div className="meta">
-        <span className="tag">📍 {vaga.bairro}</span>
+        <span className="tag">
+          📍 {[vaga.bairro, vaga.cidade].filter(Boolean).join(", ")}
+        </span>
         <span className="tag sal">R$ {vaga.salario}</span>
         <span className="tag muted">{vaga.tipo}</span>
       </div>

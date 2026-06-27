@@ -8,7 +8,8 @@ export type TipoContrato =
   | "Temporário"
   | "Estágio"
   | "Meio período"
-  | "Freelancer";
+  | "Freelancer"
+  | "Outro";
 
 export type Categoria =
   | "Comércio"
@@ -29,6 +30,7 @@ export interface Vaga {
   id: number;
   titulo: string;
   empresa: string;
+  cidade: string;
   bairro: string;
   salario: string;
   tipo: TipoContrato;

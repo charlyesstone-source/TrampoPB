@@ -90,7 +90,9 @@ export function JobSheet() {
             {vaga.empresa}
           </div>
           <div className="meta" style={{ marginTop: 14 }}>
-            <span className="tag">📍 {vaga.bairro}, João Pessoa</span>
+            <span className="tag">
+              📍 {[vaga.bairro, vaga.cidade].filter(Boolean).join(", ")}
+            </span>
             <span className="tag sal">R$ {vaga.salario}</span>
             <span className="tag muted">{vaga.tipo}</span>
             <span className="tag muted">{vaga.categoria}</span>

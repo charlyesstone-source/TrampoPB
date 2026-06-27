@@ -15,21 +15,31 @@ export default function BuscarPage() {
   const q = termo.toLowerCase();
   const resultados = vagas.filter((v) => {
     const naCat = cat === "Todas" || v.categoria === cat;
-    const texto = (v.titulo + v.empresa + v.bairro + v.categoria).toLowerCase();
+    const texto = (
+      v.titulo +
+      v.empresa +
+      v.cidade +
+      v.bairro +
+      v.categoria
+    ).toLowerCase();
     return naCat && texto.includes(q);
   });
 
   return (
     <section className="view">
       <div className="pad">
-        <SubHead titulo="Buscar vagas" sub="Cargo, empresa ou bairro." voltarPara="/" />
+        <SubHead
+          titulo="Buscar vagas"
+          sub="Cargo, empresa, cidade ou bairro."
+          voltarPara="/"
+        />
         <div className="search" style={{ marginTop: 12 }}>
           <IconSearch width={18} height={18} stroke="#9aa7a2" />
           <input
             value={termo}
             onChange={(e) => setTermo(e.target.value)}
-            placeholder="Ex.: atendente, Manaíra, vendedor"
-            aria-label="Buscar cargo, empresa ou bairro"
+            placeholder="Ex.: atendente, Campina Grande, vendedor"
+            aria-label="Buscar cargo, empresa, cidade ou bairro"
             autoFocus
           />
         </div>

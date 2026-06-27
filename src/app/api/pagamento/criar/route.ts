@@ -24,6 +24,7 @@ export async function POST(req: Request) {
     empresa_id: user.id,
     empresa_nome: String(b.empresa ?? "").trim(),
     titulo: String(b.titulo ?? "").trim(),
+    cidade: String(b.cidade ?? "").trim() || "João Pessoa",
     bairro: String(b.bairro ?? "").trim(),
     salario: String(b.salario ?? "").trim() || "A combinar",
     tipo: String(b.tipo ?? "").trim(),

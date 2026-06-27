@@ -23,6 +23,7 @@ interface VagaRow {
   empresa_id: string;
   empresa_nome: string;
   titulo: string;
+  cidade: string;
   bairro: string;
   salario: string;
   tipo: string;
@@ -83,6 +84,7 @@ function vagaDeRow(r: VagaRow): Vaga {
     id: r.id,
     titulo: r.titulo,
     empresa: r.empresa_nome,
+    cidade: r.cidade ?? "João Pessoa",
     bairro: r.bairro,
     salario: r.salario,
     tipo: r.tipo as TipoContrato,

@@ -9,7 +9,7 @@ import {
   PRECO_VAGA_LABEL,
   VALIDADE_DIAS,
 } from "@/lib/config";
-import { BAIRROS, CATEGORIAS, TIPOS_CONTRATO } from "@/lib/mock-data";
+import { CATEGORIAS, TIPOS_CONTRATO } from "@/lib/mock-data";
 
 export default function AnunciarPage() {
   const router = useRouter();
@@ -29,14 +29,48 @@ export default function AnunciarPage() {
   const [preench, setPreench] = useState({
     titulo: "",
     empresa: "",
-    bairro: "",
-    tipo: "",
     categoria: "",
     salario: "",
     descricao: "",
     requisitos: "",
   });
   const [formKey, setFormKey] = useState(0);
+
+  // Localização: o CEP preenche cidade e bairro automaticamente (ViaCEP).
+  // Tipo de contrato é controlado para revelar o campo "Outro".
+  const [cep, setCep] = useState("");
+  const [cidade, setCidade] = useState("");
+  const [bairro, setBairro] = useState("");
+  const [tipo, setTipo] = useState<string>(TIPOS_CONTRATO[0]);
+  const [tipoOutro, setTipoOutro] = useState("");
+  const [buscandoCep, setBuscandoCep] = useState(false);
+
+  const formatarCep = (v: string) => {
+    const d = v.replace(/\D/g, "").slice(0, 8);
+    return d.length > 5 ? `${d.slice(0, 5)}-${d.slice(5)}` : d;
+  };
+
+  /** Busca cidade e bairro pelo CEP (ViaCEP). Só dispara com 8 dígitos. */
+  const buscarCep = async (valor: string) => {
+    const d = valor.replace(/\D/g, "");
+    if (d.length !== 8) return;
+    setBuscandoCep(true);
+    try {
+      const res = await fetch(`https://viacep.com.br/ws/${d}/json/`);
+      const data = await res.json();
+      if (data.erro) {
+        mostrarToast("CEP não encontrado. Preencha cidade e bairro à mão.");
+        return;
+      }
+      if (data.localidade) setCidade(data.localidade);
+      if (data.bairro) setBairro(data.bairro);
+      mostrarToast("Cidade e bairro preenchidos ✓ Confira.");
+    } catch {
+      mostrarToast("Não foi possível buscar o CEP agora.");
+    } finally {
+      setBuscandoCep(false);
+    }
+  };
 
   const importar = async () => {
     const v = entrada.trim();
@@ -58,12 +92,19 @@ export default function AnunciarPage() {
         setPreench((p) => ({
           ...p,
           titulo: vg.titulo || p.titulo,
-          bairro: vg.bairro || p.bairro,
-          tipo: vg.tipo || p.tipo,
           categoria: vg.categoria || p.categoria,
           salario: vg.salario || p.salario,
           descricao: vg.descricao || p.descricao,
         }));
+        if (vg.bairro) setBairro(vg.bairro);
+        if (vg.tipo) {
+          if ((TIPOS_CONTRATO as string[]).includes(vg.tipo)) {
+            setTipo(vg.tipo);
+          } else {
+            setTipo("Outro");
+            setTipoOutro(vg.tipo);
+          }
+        }
         setFormKey((k) => k + 1);
         mostrarToast("Campos preenchidos ✓ Revise antes de publicar.");
       } else if (data.bloqueado) {
@@ -96,6 +137,16 @@ export default function AnunciarPage() {
       .map((s) => s.trim())
       .filter(Boolean);
 
+    const tipoFinal = tipo === "Outro" ? tipoOutro.trim() : tipo;
+    if (!cidade.trim()) {
+      mostrarToast("Informe a cidade (ou digite o CEP).");
+      return;
+    }
+    if (tipo === "Outro" && !tipoOutro.trim()) {
+      mostrarToast("Descreva o tipo de contrato.");
+      return;
+    }
+
     setPublicando(true);
     try {
       const res = await fetch("/api/pagamento/criar", {
@@ -104,9 +155,10 @@ export default function AnunciarPage() {
         body: JSON.stringify({
           titulo: txt("titulo"),
           empresa: txt("empresa"),
-          bairro: txt("bairro"),
+          cidade: cidade.trim(),
+          bairro: bairro.trim(),
           salario: txt("salario"),
-          tipo: txt("tipo"),
+          tipo: tipoFinal,
           categoria: txt("categoria"),
           descricao: txt("descricao"),
           requisitos,
@@ -147,7 +199,7 @@ export default function AnunciarPage() {
       <div className="pad">
         <SubHead
           titulo="Anunciar vaga"
-          sub="Para empresas de João Pessoa e região."
+          sub="Para empresas de toda a Paraíba."
           voltarPara="/empresa"
         />
 
@@ -243,35 +295,64 @@ export default function AnunciarPage() {
               defaultValue={preench.empresa || empresa.nome}
             />
           </div>
+          <div className="field">
+            <label htmlFor="cep">CEP</label>
+            <input
+              className="in"
+              id="cep"
+              name="cep"
+              inputMode="numeric"
+              placeholder="58000-000"
+              value={cep}
+              onChange={(e) => setCep(formatarCep(e.target.value))}
+              onBlur={(e) => buscarCep(e.target.value)}
+            />
+            <small className="hint">
+              {buscandoCep
+                ? "Buscando endereço…"
+                : "Digite o CEP para preencher cidade e bairro."}
+            </small>
+          </div>
           <div className="row2">
             <div className="field">
+              <label htmlFor="cidade">Cidade</label>
+              <input
+                className="in"
+                id="cidade"
+                name="cidade"
+                required
+                placeholder="Ex.: Campina Grande"
+                value={cidade}
+                onChange={(e) => setCidade(e.target.value)}
+              />
+            </div>
+            <div className="field">
               <label htmlFor="bairro">Bairro</label>
-              <select
+              <input
                 className="in"
                 id="bairro"
                 name="bairro"
-                defaultValue={preench.bairro || BAIRROS[0]}
-              >
-                {BAIRROS.map((b) => (
-                  <option key={b}>{b}</option>
-                ))}
-              </select>
+                placeholder="Ex.: Centro"
+                value={bairro}
+                onChange={(e) => setBairro(e.target.value)}
+              />
             </div>
+          </div>
+          <div className="row2">
             <div className="field">
               <label htmlFor="tipo">Contrato</label>
               <select
                 className="in"
                 id="tipo"
                 name="tipo"
-                defaultValue={preench.tipo || TIPOS_CONTRATO[0]}
+                value={tipo}
+                onChange={(e) => setTipo(e.target.value)}
               >
                 {TIPOS_CONTRATO.map((t) => (
                   <option key={t}>{t}</option>
                 ))}
               </select>
             </div>
-          </div>
-          <div className="row2">
             <div className="field">
               <label htmlFor="categoria">Categoria</label>
               <select
@@ -285,17 +366,30 @@ export default function AnunciarPage() {
                 ))}
               </select>
             </div>
+          </div>
+          {tipo === "Outro" && (
             <div className="field">
-              <label htmlFor="salario">Salário (R$)</label>
+              <label htmlFor="tipoOutro">Qual o tipo de contrato?</label>
               <input
                 className="in"
-                id="salario"
-                name="salario"
-                placeholder="Ex.: 1.600"
-                inputMode="numeric"
-                defaultValue={preench.salario}
+                id="tipoOutro"
+                name="tipoOutro"
+                placeholder="Ex.: PJ, Diária, Comissionado…"
+                value={tipoOutro}
+                onChange={(e) => setTipoOutro(e.target.value)}
               />
             </div>
+          )}
+          <div className="field">
+            <label htmlFor="salario">Salário (R$)</label>
+            <input
+              className="in"
+              id="salario"
+              name="salario"
+              placeholder="Ex.: 1.600"
+              inputMode="numeric"
+              defaultValue={preench.salario}
+            />
           </div>
           <div className="field">
             <label htmlFor="descricao">Descrição da vaga</label>
