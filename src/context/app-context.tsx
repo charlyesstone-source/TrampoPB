@@ -35,6 +35,9 @@ const TEM_SUPABASE = Boolean(
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 
+/** Resultado de tentar candidatar (decide o que a interface faz em seguida). */
+export type ResultadoCandidatura = "ok" | "incompleto" | "duplicado" | "erro";
+
 /** Campos de currículo (tabela candidatos), hidratados após o login. */
 interface CurriculoLocal {
   whatsapp: string;
@@ -71,7 +74,7 @@ interface AppState {
   abrirSheet: (id: number) => void;
   fecharSheet: () => void;
   alternarSalva: (id: number) => void;
-  candidatarVagaAberta: () => Promise<void>;
+  candidatarVagaAberta: () => Promise<ResultadoCandidatura>;
   atualizarCurriculo: (
     dados: Partial<Candidato>,
     opcoes?: { silencioso?: boolean }
@@ -186,13 +189,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
       Promise.all([getCandidato(sessao.id), listarVagasCandidatadas()])
         .then(([cv, ids]) => {
           if (!ativo) return;
-          setCurriculo({
-            whatsapp: cv.whatsapp ?? "",
-            area: cv.area ?? "",
-            bairro: cv.bairro ?? "",
-            sobre: cv.sobre ?? "",
-            experiencia: cv.experiencia ?? "",
-          });
+          // Só hidrata se o banco tem dados — evita que uma leitura logo após o
+          // cadastro (linha ainda vazia) apague o currículo recém-preenchido.
+          const temDados =
+            cv.whatsapp || cv.area || cv.bairro || cv.sobre || cv.experiencia;
+          if (temDados) {
+            setCurriculo({
+              whatsapp: cv.whatsapp ?? "",
+              area: cv.area ?? "",
+              bairro: cv.bairro ?? "",
+              sobre: cv.sobre ?? "",
+              experiencia: cv.experiencia ?? "",
+            });
+          }
           setCandidaturasEnviadas(new Set(ids));
         })
         .catch(() => {});
@@ -251,18 +260,21 @@ export function AppProvider({ children }: { children: ReactNode }) {
     [notificar]
   );
 
-  const candidatarVagaAberta = useCallback(async () => {
-    if (vagaAberta == null || !sessao) return;
+  const candidatarVagaAberta = useCallback(async (): Promise<ResultadoCandidatura> => {
+    if (vagaAberta == null || !sessao) return "erro";
     const id = vagaAberta;
     if (candidaturasEnviadas.has(id)) {
       notificar("Você já se candidatou a esta vaga");
-      return;
+      return "duplicado";
     }
     const vaga = vagas.find((v) => v.id === id);
     try {
-      // Snapshot a partir do currículo SALVO no banco (fonte da verdade),
-      // garantindo que a empresa receba o currículo completo e atual.
+      // Currículo SALVO no banco é a fonte da verdade (evita estado defasado
+      // logo após o cadastro). O WhatsApp é checado aqui, com o dado real.
       const cv = await getCandidato(sessao.id);
+      if (!cv.whatsapp || !cv.whatsapp.trim()) {
+        return "incompleto";
+      }
       await candidatarDb(id, sessao.id, {
         nome: sessao.nome || cv.nome || "",
         area: cv.area ?? "",
@@ -276,8 +288,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
       notificar(
         `Candidatura enviada ✓ ${vaga ? vaga.empresa + " foi avisada." : ""}`.trim()
       );
+      return "ok";
     } catch {
       notificar("Não foi possível enviar a candidatura.");
+      return "erro";
     }
   }, [vagaAberta, sessao, candidaturasEnviadas, vagas, notificar]);
 

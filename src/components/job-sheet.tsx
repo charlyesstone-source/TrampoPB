@@ -36,7 +36,7 @@ export function JobSheet() {
   const salva = salvas.has(vaga.id);
   const candidatou = candidaturasEnviadas.has(vaga.id);
 
-  const aoCandidatar = () => {
+  const aoCandidatar = async () => {
     // Visitante: leva à inscrição.
     if (!candidato.registrado) {
       fecharSheet();
@@ -44,14 +44,13 @@ export function JobSheet() {
       router.push("/curriculo");
       return;
     }
-    // Currículo precisa de contato para a empresa retornar.
-    if (!candidato.whatsapp.trim()) {
+    // O currículo é checado no banco (fonte da verdade) dentro de candidatar.
+    const resultado = await candidatarVagaAberta();
+    if (resultado === "incompleto") {
       fecharSheet();
       mostrarToast("Complete seu currículo (WhatsApp) antes de se candidatar");
       router.push("/curriculo");
-      return;
     }
-    void candidatarVagaAberta();
   };
 
   // Só pede consentimento de quem já é candidato (visitante vai ao cadastro antes).
