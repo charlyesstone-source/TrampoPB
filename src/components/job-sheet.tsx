@@ -189,16 +189,6 @@ export function JobSheet() {
             </div>
           )}
 
-          {(vaga.emailContato || vaga.whatsappContato) && (
-            <div className="block">
-              <h4>Contato da empresa</h4>
-              <ul>
-                {vaga.emailContato && <li>E-mail: {vaga.emailContato}</li>}
-                {vaga.whatsappContato && <li>WhatsApp: {vaga.whatsappContato}</li>}
-              </ul>
-            </div>
-          )}
-
           <div className="block">
             <h4>Publicado</h4>
             <p>

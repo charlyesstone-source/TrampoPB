@@ -182,6 +182,76 @@ export async function excluirVaga(id: number): Promise<void> {
   if (error) throw new Error(error.message);
 }
 
+/** Campos editáveis de um anúncio (visão empresa). */
+export interface VagaEditavel {
+  id: number;
+  titulo: string;
+  empresaNome: string;
+  cidade: string;
+  bairro: string;
+  salario: string;
+  tipo: string;
+  categoria: string;
+  descricao: string;
+  requisitos: string[];
+  emailContato: string;
+  whatsappContato: string;
+}
+
+/** Carrega uma vaga da empresa logada para edição (RLS garante a posse). */
+export async function getMinhaVaga(id: number): Promise<VagaEditavel | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from("vagas")
+    .select(
+      "id, titulo, empresa_nome, cidade, bairro, salario, tipo, categoria, descricao, requisitos, email_contato, whatsapp_contato"
+    )
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data) return null;
+  const r = data as VagaRow;
+  return {
+    id: r.id,
+    titulo: r.titulo,
+    empresaNome: r.empresa_nome,
+    cidade: r.cidade ?? "João Pessoa",
+    bairro: r.bairro,
+    salario: r.salario,
+    tipo: r.tipo,
+    categoria: r.categoria,
+    descricao: r.descricao,
+    requisitos: r.requisitos ?? [],
+    emailContato: r.email_contato ?? "",
+    whatsappContato: r.whatsapp_contato ?? "",
+  };
+}
+
+/** Salva as alterações de um anúncio (RLS garante que é da empresa logada). */
+export async function atualizarVaga(
+  id: number,
+  dados: Omit<VagaEditavel, "id">
+): Promise<void> {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from("vagas")
+    .update({
+      titulo: dados.titulo,
+      empresa_nome: dados.empresaNome,
+      cidade: dados.cidade || "João Pessoa",
+      bairro: dados.bairro,
+      salario: dados.salario || "A combinar",
+      tipo: dados.tipo,
+      categoria: dados.categoria,
+      descricao: dados.descricao,
+      requisitos: dados.requisitos.length ? dados.requisitos : ["Não informado"],
+      email_contato: dados.emailContato || null,
+      whatsapp_contato: dados.whatsappContato || null,
+    })
+    .eq("id", id);
+  if (error) throw new Error(error.message);
+}
+
 // ---- Perfil do candidato ---------------------------------------------------
 
 export async function getCandidato(id: string): Promise<Partial<Candidato>> {

@@ -6,12 +6,7 @@ import { useEffect, useState } from "react";
 import { SubHead } from "@/components/sub-head";
 import { useApp } from "@/context/app-context";
 import { VALIDADE_DIAS } from "@/lib/config";
-import {
-  encerrarVaga,
-  excluirVaga,
-  listarMinhasVagas,
-  type VagaGerenciada,
-} from "@/lib/db";
+import { excluirVaga, listarMinhasVagas, type VagaGerenciada } from "@/lib/db";
 import type { StatusVaga } from "@/lib/types";
 
 const STATUS_LABEL: Record<StatusVaga, string> = {
@@ -45,21 +40,6 @@ export default function MeusAnunciosPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [empresa.registrada, carregandoSessao]);
 
-  const aoEncerrar = async (id: number) => {
-    if (!window.confirm("Encerrar esta vaga? Ela sai do ar e para de receber candidatos. As candidaturas já recebidas continuam no painel.")) return;
-    setOcupado(id);
-    try {
-      await encerrarVaga(id);
-      mostrarToast("Vaga encerrada ✓");
-      carregar();
-      await recarregarVagas();
-    } catch {
-      mostrarToast("Não foi possível encerrar.");
-    } finally {
-      setOcupado(null);
-    }
-  };
-
   const aoExcluir = async (id: number) => {
     if (!window.confirm("Excluir esta vaga definitivamente? Isso remove também todas as candidaturas recebidas. Esta ação não pode ser desfeita.")) return;
     setOcupado(id);
@@ -80,7 +60,7 @@ export default function MeusAnunciosPage() {
       <div className="pad">
         <SubHead
           titulo="Meus anúncios"
-          sub="Gerencie suas vagas: encerre quando preencher ou exclua."
+          sub="Gerencie suas vagas: edite ou exclua."
           voltarPara="/perfil"
         />
 
@@ -143,15 +123,13 @@ export default function MeusAnunciosPage() {
                       Ver candidaturas
                     </Link>
                   )}
-                  {v.status === "ativa" && (
-                    <button
-                      type="button"
+                  {v.status !== "expirada" && (
+                    <Link
                       className="btn-mini primary"
-                      disabled={ocupado === v.id}
-                      onClick={() => aoEncerrar(v.id)}
+                      href={`/anuncios/${v.id}/editar`}
                     >
-                      Encerrar (preenchida)
-                    </button>
+                      Editar anúncio
+                    </Link>
                   )}
                   <button
                     type="button"
