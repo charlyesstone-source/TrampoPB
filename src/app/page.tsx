@@ -30,11 +30,7 @@ export default function InicioPage() {
           {candidato.registrado
             ? `${saudacao}, ${candidato.nome.split(" ")[0]} 👋`
             : `${saudacao} 👋`}
-          <small>
-            {candidato.registrado
-              ? "Onde o trabalho nasce primeiro."
-              : "Encontre seu próximo trampo na Paraíba."}
-          </small>
+          <small>Onde o trabalho nasce primeiro.</small>
         </div>
 
         {!candidato.registrado && (
