@@ -79,6 +79,7 @@ interface AppState {
     opcoes?: { silencioso?: boolean }
   ) => Promise<void>;
   sairConta: () => Promise<void>;
+  excluirConta: () => Promise<boolean>;
   definirCobranca: (c: CobrancaPix | null) => void;
   recarregarVagas: (opcoes?: { silencioso?: boolean }) => Promise<void>;
   marcarCandidaturasVistas: () => void;
@@ -361,6 +362,22 @@ export function AppProvider({ children }: { children: ReactNode }) {
     notificar("Você saiu da sua conta");
   }, [notificar]);
 
+  const excluirConta = useCallback(async (): Promise<boolean> => {
+    try {
+      const res = await fetch("/api/conta/excluir", { method: "POST" });
+      if (!res.ok) throw new Error();
+      // Conta apagada no servidor (com cascata). Encerra a sessão e limpa o local.
+      await sair();
+      setCurriculo(CURRICULO_VAZIO);
+      setCandidaturasEnviadas(new Set());
+      notificar("Conta excluída. Seus dados foram removidos.");
+      return true;
+    } catch {
+      notificar("Não foi possível excluir a conta agora. Tente de novo.");
+      return false;
+    }
+  }, [notificar]);
+
   const definirCobranca = useCallback((c: CobrancaPix | null) => {
     setCobranca(c);
   }, []);
@@ -385,6 +402,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     candidatarVagaAberta,
     atualizarCurriculo,
     sairConta,
+    excluirConta,
     definirCobranca,
     recarregarVagas,
     marcarCandidaturasVistas,

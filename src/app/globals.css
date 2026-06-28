@@ -1253,6 +1253,38 @@ textarea.in {
 .menu a span {
   color: #c3c9c6;
 }
+.menu a.menu-perigo {
+  color: #b4231c;
+}
+.menu a.menu-perigo span {
+  color: #e0a39d;
+}
+
+/* Confirmação de exclusão de conta -------------------------------*/
+.excluir-box {
+  margin-top: 14px;
+  background: #fdecea;
+  border: 1px solid #f6c9c4;
+  border-radius: 14px;
+  padding: 16px;
+}
+.excluir-box b {
+  font-family: var(--font-bricolage), "Bricolage Grotesque", sans-serif;
+  font-size: 15px;
+  color: #8f1c16;
+}
+.excluir-box p {
+  font-size: 13.5px;
+  color: #6b4340;
+  line-height: 1.5;
+  margin-top: 6px;
+}
+.excluir-acoes {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
 .demo-note {
   margin: 18px 0 4px;
   font-size: 11.5px;
@@ -1527,6 +1559,216 @@ textarea.in {
   color: #b4231c;
   border-color: #f6c9c4;
   background: #fdecea;
+}
+
+/* Denunciar vaga (dentro da sheet de detalhe) --------------------*/
+.denuncia-wrap {
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+.denuncia-link {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: none;
+  padding: 4px 0;
+  cursor: pointer;
+}
+.denuncia-link:hover {
+  color: #b4231c;
+}
+.denuncia-box h4 {
+  font-family: var(--font-bricolage), "Bricolage Grotesque", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.denuncia-sub {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.denuncia-motivos {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.denuncia-opt {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  color: #33423d;
+  cursor: pointer;
+}
+.denuncia-opt input {
+  width: 17px;
+  height: 17px;
+  accent-color: var(--brand);
+  flex: none;
+}
+.denuncia-box textarea.in {
+  min-height: 54px;
+  width: 100%;
+}
+.denuncia-acoes {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+.denuncia-ok {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand-deep);
+  background: var(--brand-soft);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+/* Painel de moderação (/admin) -----------------------------------*/
+.admin-vazio {
+  font-size: 14px;
+  color: var(--muted);
+  margin-top: 24px;
+  text-align: center;
+}
+.link-inline {
+  font: inherit;
+  color: var(--brand-deep);
+  font-weight: 700;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.admin-negado {
+  margin-top: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px;
+  font-size: 14px;
+  color: #33423d;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+.admin-filtros {
+  display: flex;
+  gap: 8px;
+  margin: 16px 0 14px;
+}
+.admin-filtros .chip {
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  cursor: pointer;
+}
+.admin-filtros .chip.on {
+  background: var(--brand-soft);
+  border-color: var(--brand);
+  color: var(--brand-deep);
+}
+.admin-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.den-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 14px;
+}
+.den-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.den-status {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.den-status.s-aberta {
+  background: #fdecea;
+  color: #b4231c;
+}
+.den-status.s-revisada {
+  background: var(--brand-soft);
+  color: var(--brand-deep);
+}
+.den-status.s-arquivada {
+  background: #eee;
+  color: #777;
+}
+.den-quando {
+  font-size: 12px;
+  color: var(--muted);
+}
+.den-motivo {
+  font-size: 15px;
+  font-weight: 700;
+  color: #14201d;
+  margin-bottom: 4px;
+}
+.den-vaga {
+  font-size: 13.5px;
+  color: #33423d;
+}
+.den-id {
+  color: var(--muted);
+}
+.den-detalhe {
+  font-size: 13.5px;
+  color: #4a5b56;
+  font-style: italic;
+  margin-top: 6px;
+}
+.den-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.den-vstatus,
+.den-anon {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #f0efe8;
+  color: #5a6a64;
+}
+.den-vstatus.v-ativa {
+  background: #e6f4ee;
+  color: var(--brand-deep);
+}
+.den-vstatus.v-removida {
+  background: #fdecea;
+  color: #b4231c;
+}
+.den-acoes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 13px;
 }
 
 /* Bottom nav -----------------------------------------------------*/

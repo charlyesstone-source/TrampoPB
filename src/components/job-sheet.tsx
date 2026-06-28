@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from "react";
+import { DenunciarVaga } from "./denunciar-vaga";
 import { IconBack } from "./icons";
 import { useApp } from "@/context/app-context";
 import { corLogo } from "@/lib/mock-data";
@@ -216,6 +217,10 @@ export function JobSheet() {
               </span>
             </label>
           )}
+
+          <div className="denuncia-wrap">
+            <DenunciarVaga vagaId={vaga.id} />
+          </div>
         </div>
 
         <div className="sheet-foot">

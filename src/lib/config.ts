@@ -36,6 +36,20 @@ export const CIDADE = "João Pessoa, PB";
  */
 export const CONTRATADOS_DEMO_BASE = 70;
 
+/**
+ * Motivos de denúncia de uma vaga. Usados na tela (lista de opções) e
+ * validados na rota /api/denunciar — manter os dois lados em sincronia.
+ */
+export const MOTIVOS_DENUNCIA = [
+  "Vaga falsa ou golpe",
+  "Pede dinheiro ou depósito",
+  "Discriminação ou preconceito",
+  "Conteúdo ofensivo",
+  "Vaga duplicada ou desatualizada",
+  "Outro",
+] as const;
+export type MotivoDenuncia = (typeof MOTIVOS_DENUNCIA)[number];
+
 /** Formata centavos como moeda brasileira: 3990 -> "R$ 39,90". */
 export function formatarPreco(centavos: number): string {
   return (centavos / 100).toLocaleString("pt-BR", {
